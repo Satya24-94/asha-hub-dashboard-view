@@ -3,158 +3,175 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Phone, 
   MapPin, 
+  Phone, 
   Star, 
-  Calendar,
-  Users,
+  Activity,
+  Search,
+  Filter,
+  Eye,
   CheckCircle,
   Clock,
-  AlertTriangle
+  AlertCircle
 } from "lucide-react";
+import { useState } from "react";
 
 export const AshaList = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  // Updated to include 20 ASHAs as requested
   const ashas = [
-    {
-      id: 1,
-      name: "Priya Sharma",
-      village: "Rampur",
-      phone: "+91 98765 43210",
-      rating: 4.8,
-      status: "active",
-      tasksCompleted: 23,
-      tasksPending: 2,
-      lastActive: "2 hours ago",
-      beneficiaries: 45
-    },
-    {
-      id: 2,
-      name: "Meera Devi",
-      village: "Govindpur",
-      phone: "+91 98765 43211",
-      rating: 4.6,
-      status: "active",
-      tasksCompleted: 18,
-      tasksPending: 3,
-      lastActive: "4 hours ago",
-      beneficiaries: 38
-    },
-    {
-      id: 3,
-      name: "Lakshmi K",
-      village: "Sundarganj",
-      phone: "+91 98765 43212",
-      rating: 4.2,
-      status: "inactive",
-      tasksCompleted: 15,
-      tasksPending: 5,
-      lastActive: "1 day ago",
-      beneficiaries: 42
-    },
-    {
-      id: 4,
-      name: "Sunita Yadav",
-      village: "Krishnanagar",
-      phone: "+91 98765 43213",
-      rating: 4.9,
-      status: "active",
-      tasksCompleted: 28,
-      tasksPending: 1,
-      lastActive: "1 hour ago",
-      beneficiaries: 52
-    }
+    { id: 1, name: "Priya Sharma", village: "Rampur", phone: "+91 9876543210", rating: 4.8, tasksCompleted: 45, tasksTotal: 50, status: "active", lastActive: "2 hours ago" },
+    { id: 2, name: "Meera Devi", village: "Govindpur", phone: "+91 9876543211", rating: 4.6, tasksCompleted: 38, tasksTotal: 45, status: "active", lastActive: "4 hours ago" },
+    { id: 3, name: "Lakshmi K", village: "Sundarganj", phone: "+91 9876543212", rating: 4.2, tasksCompleted: 32, tasksTotal: 48, status: "inactive", lastActive: "2 days ago" },
+    { id: 4, name: "Sunita Yadav", village: "Krishnanagar", phone: "+91 9876543213", rating: 4.9, tasksCompleted: 50, tasksTotal: 50, status: "active", lastActive: "1 hour ago" },
+    { id: 5, name: "Radha Singh", village: "Shivpur", phone: "+91 9876543214", rating: 4.4, tasksCompleted: 40, tasksTotal: 46, status: "active", lastActive: "3 hours ago" },
+    { id: 6, name: "Kavita Rani", village: "Madhubani", phone: "+91 9876543215", rating: 4.7, tasksCompleted: 43, tasksTotal: 47, status: "active", lastActive: "5 hours ago" },
+    { id: 7, name: "Anita Kumari", village: "Bishunpur", phone: "+91 9876543216", rating: 4.3, tasksCompleted: 35, tasksTotal: 42, status: "warning", lastActive: "1 day ago" },
+    { id: 8, name: "Rekha Devi", village: "Janakpur", phone: "+91 9876543217", rating: 4.5, tasksCompleted: 41, tasksTotal: 45, status: "active", lastActive: "2 hours ago" },
+    { id: 9, name: "Sita Kumari", village: "Lalpur", phone: "+91 9876543218", rating: 4.1, tasksCompleted: 28, tasksTotal: 40, status: "inactive", lastActive: "3 days ago" },
+    { id: 10, name: "Geeta Sharma", village: "Sonpur", phone: "+91 9876543219", rating: 4.8, tasksCompleted: 47, tasksTotal: 49, status: "active", lastActive: "1 hour ago" },
+    { id: 11, name: "Poonam Devi", village: "Bettiah", phone: "+91 9876543220", rating: 4.6, tasksCompleted: 39, tasksTotal: 44, status: "active", lastActive: "4 hours ago" },
+    { id: 12, name: "Mamta Singh", village: "Motihari", phone: "+91 9876543221", rating: 4.4, tasksCompleted: 36, tasksTotal: 43, status: "active", lastActive: "6 hours ago" },
+    { id: 13, name: "Shanti Devi", village: "Bagaha", phone: "+91 9876543222", rating: 4.2, tasksCompleted: 33, tasksTotal: 41, status: "warning", lastActive: "1 day ago" },
+    { id: 14, name: "Urmila Kumari", village: "Siwan", phone: "+91 9876543223", rating: 4.7, tasksCompleted: 44, tasksTotal: 46, status: "active", lastActive: "2 hours ago" },
+    { id: 15, name: "Savita Rani", village: "Chapra", phone: "+91 9876543224", rating: 4.5, tasksCompleted: 42, tasksTotal: 47, status: "active", lastActive: "3 hours ago" },
+    { id: 16, name: "Pushpa Devi", village: "Gopalganj", phone: "+91 9876543225", rating: 4.3, tasksCompleted: 37, tasksTotal: 44, status: "active", lastActive: "5 hours ago" },
+    { id: 17, name: "Kiran Kumari", village: "Muzaffarpur", phone: "+91 9876543226", rating: 4.1, tasksCompleted: 30, tasksTotal: 39, status: "inactive", lastActive: "2 days ago" },
+    { id: 18, name: "Asha Devi", village: "Darbhanga", phone: "+91 9876543227", rating: 4.8, tasksCompleted: 46, tasksTotal: 48, status: "active", lastActive: "1 hour ago" },
+    { id: 19, name: "Renu Singh", village: "Begusarai", phone: "+91 9876543228", rating: 4.6, tasksCompleted: 40, tasksTotal: 45, status: "active", lastActive: "3 hours ago" },
+    { id: 20, name: "Sunita Kumari", village: "Samastipur", phone: "+91 9876543229", rating: 4.4, tasksCompleted: 38, tasksTotal: 43, status: "active", lastActive: "4 hours ago" }
   ];
 
   const getStatusBadge = (status: string) => {
-    if (status === "active") {
-      return <Badge className="bg-green-100 text-green-800 border-green-200">Active</Badge>;
+    switch (status) {
+      case "active":
+        return <Badge className="bg-green-100 text-green-800 border-green-200"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>;
+      case "inactive":
+        return <Badge className="bg-red-100 text-red-800 border-red-200"><AlertCircle className="h-3 w-3 mr-1" />Inactive</Badge>;
+      case "warning":
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200"><Clock className="h-3 w-3 mr-1" />Warning</Badge>;
+      default:
+        return <Badge>Unknown</Badge>;
     }
-    return <Badge className="bg-gray-100 text-gray-800 border-gray-200">Inactive</Badge>;
   };
 
-  const getStatusIcon = (status: string) => {
-    if (status === "active") {
-      return <div className="h-3 w-3 bg-green-500 rounded-full"></div>;
-    }
-    return <div className="h-3 w-3 bg-gray-400 rounded-full"></div>;
+  const filteredAshas = ashas.filter(asha => {
+    const matchesSearch = asha.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         asha.village.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "all" || asha.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const handleViewDashboard = (ashaId: number) => {
+    // Navigate to individual ASHA dashboard
+    window.open('/asha-dashboard', '_blank');
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">ASHA Workers</h2>
-        <Badge variant="outline">{ashas.length} Total</Badge>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h2 className="text-lg font-semibold mb-2">ASHA Workers Management</h2>
+        <p className="text-sm text-gray-600">Manage and monitor your team of {ashas.length} ASHA workers</p>
       </div>
 
-      {ashas.map((asha) => (
-        <Card key={asha.id} className="shadow-md hover:shadow-lg transition-shadow">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center space-x-3">
+      {/* Filters */}
+      <div className="flex space-x-3">
+        <div className="flex-1 relative">
+          <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
+          <Input
+            placeholder="Search by name or village..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-32">
+            <Filter className="h-4 w-4 mr-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="warning">Warning</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* ASHA Cards */}
+      <div className="space-y-4">
+        {filteredAshas.map((asha) => (
+          <Card key={asha.id} className="shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-4">
                 <Avatar className="h-12 w-12">
                   <AvatarImage src="/placeholder.svg" />
                   <AvatarFallback className="bg-indigo-100 text-indigo-600">
                     {asha.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{asha.name}</h3>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <MapPin className="h-4 w-4" />
-                    <span>{asha.village}</span>
+                
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-semibold text-gray-900">{asha.name}</h3>
+                    {getStatusBadge(asha.status)}
+                  </div>
+                  
+                  <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
+                    <div className="flex items-center space-x-1">
+                      <MapPin className="h-3 w-3" />
+                      <span>{asha.village}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Phone className="h-3 w-3" />
+                      <span>{asha.phone}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-1">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium">{asha.rating}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Activity className="h-4 w-4 text-green-500" />
+                        <span className="text-sm">{asha.tasksCompleted}/{asha.tasksTotal} tasks</span>
+                      </div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleViewDashboard(asha.id)}
+                      className="text-xs"
+                    >
+                      <Eye className="h-3 w-3 mr-1" />
+                      View Dashboard
+                    </Button>
+                  </div>
+                  
+                  <div className="mt-2 text-xs text-gray-500">
+                    Last active: {asha.lastActive}
                   </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                {getStatusIcon(asha.status)}
-                {getStatusBadge(asha.status)}
-              </div>
-            </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-900">Completed</span>
-                </div>
-                <p className="text-2xl font-bold text-blue-600">{asha.tasksCompleted}</p>
-              </div>
-              <div className="bg-orange-50 p-3 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm font-medium text-orange-900">Pending</span>
-                </div>
-                <p className="text-2xl font-bold text-orange-600">{asha.tasksPending}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-1">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-medium">{asha.rating}</span>
-              </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Users className="h-4 w-4" />
-                <span>{asha.beneficiaries} beneficiaries</span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Last active: {asha.lastActive}</span>
-              <div className="flex space-x-2">
-                <Button size="sm" variant="outline" className="h-8">
-                  <Phone className="h-3 w-3 mr-1" />
-                  Call
-                </Button>
-                <Button size="sm" className="h-8">
-                  View Details
-                </Button>
-              </div>
-            </div>
-          </CardContent>
+      {filteredAshas.length === 0 && (
+        <Card className="p-8 text-center">
+          <p className="text-gray-500">No ASHA workers found matching your criteria.</p>
         </Card>
-      ))}
+      )}
     </div>
   );
 };
