@@ -1,10 +1,10 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AshaPreviewModal } from "@/components/AshaPreviewModal";
 import { 
   MapPin, 
   Phone, 
@@ -15,13 +15,16 @@ import {
   Eye,
   CheckCircle,
   Clock,
-  AlertCircle
+  AlertCircle,
+  ExternalLink
 } from "lucide-react";
 import { useState } from "react";
 
 export const AshaList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [previewAsha, setPreviewAsha] = useState<any>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   // Updated to include 20 ASHAs as requested
   const ashas = [
@@ -68,19 +71,21 @@ export const AshaList = () => {
   });
 
   const handleViewDashboard = (ashaId: number) => {
-    // Navigate to individual ASHA dashboard
     window.open('/asha-dashboard', '_blank');
+  };
+
+  const handlePreview = (asha: any) => {
+    setPreviewAsha(asha);
+    setIsPreviewOpen(true);
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h2 className="text-lg font-semibold mb-2">ASHA Workers Management</h2>
         <p className="text-sm text-gray-600">Manage and monitor your team of {ashas.length} ASHA workers</p>
       </div>
 
-      {/* Filters */}
       <div className="flex space-x-3">
         <div className="flex-1 relative">
           <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
@@ -146,15 +151,26 @@ export const AshaList = () => {
                         <span className="text-sm">{asha.tasksCompleted}/{asha.tasksTotal} tasks</span>
                       </div>
                     </div>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleViewDashboard(asha.id)}
-                      className="text-xs"
-                    >
-                      <Eye className="h-3 w-3 mr-1" />
-                      View Dashboard
-                    </Button>
+                    <div className="flex space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => handlePreview(asha)}
+                        className="text-xs"
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        Preview
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleViewDashboard(asha.id)}
+                        className="text-xs"
+                      >
+                        <ExternalLink className="h-3 w-3 mr-1" />
+                        Dashboard
+                      </Button>
+                    </div>
                   </div>
                   
                   <div className="mt-2 text-xs text-gray-500">
@@ -172,6 +188,13 @@ export const AshaList = () => {
           <p className="text-gray-500">No ASHA workers found matching your criteria.</p>
         </Card>
       )}
+
+      {/* Preview Modal */}
+      <AshaPreviewModal 
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        asha={previewAsha}
+      />
     </div>
   );
 };
