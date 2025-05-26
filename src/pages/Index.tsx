@@ -17,12 +17,14 @@ import {
   Activity,
   AlertCircle,
   CheckCircle,
-  Clock
+  Clock,
+  DollarSign
 } from "lucide-react";
 import { AshaList } from "@/components/AshaList";
 import { PerformanceChart } from "@/components/PerformanceChart";
 import { TaskOverview } from "@/components/TaskOverview";
 import { AlertsPanel } from "@/components/AlertsPanel";
+import { IncentivesPanel } from "@/components/IncentivesPanel";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -145,10 +147,11 @@ const Index = () => {
 
         {/* Tabs Navigation */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-5 mb-6">
             <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
             <TabsTrigger value="ashas" className="text-xs">ASHAs</TabsTrigger>
             <TabsTrigger value="tasks" className="text-xs">Tasks</TabsTrigger>
+            <TabsTrigger value="incentives" className="text-xs">Incentives</TabsTrigger>
             <TabsTrigger value="alerts" className="text-xs">Alerts</TabsTrigger>
           </TabsList>
 
@@ -188,6 +191,10 @@ const Index = () => {
             <TaskOverview />
           </TabsContent>
 
+          <TabsContent value="incentives">
+            <IncentivesPanel />
+          </TabsContent>
+
           <TabsContent value="alerts">
             <AlertsPanel />
           </TabsContent>
@@ -202,8 +209,8 @@ const Index = () => {
             <span className="text-xs">Dashboard</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center py-3 h-auto">
-            <Heart className="h-5 w-5 mb-1" />
-            <span className="text-xs">Health</span>
+            <DollarSign className="h-5 w-5 mb-1" />
+            <span className="text-xs">Incentives</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center py-3 h-auto">
             <Calendar className="h-5 w-5 mb-1" />
