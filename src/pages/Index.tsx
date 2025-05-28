@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
 
   const facilitorStats = {
-    totalAshas: 25,
+    totalAshas: 20,
     activeToday: 18,
     completedTasks: 142,
     pendingTasks: 23,
