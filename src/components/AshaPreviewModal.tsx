@@ -16,6 +16,7 @@ import {
   Calendar
 } from "lucide-react";
 import { PerformanceIndicators } from "@/components/PerformanceIndicators";
+import { HealthIndicators } from "@/components/HealthIndicators";
 
 interface AshaPreviewModalProps {
   isOpen: boolean;
@@ -62,6 +63,35 @@ export const AshaPreviewModal = ({ isOpen, onClose, asha }: AshaPreviewModalProp
     activeDays: Math.min(30, Math.round((asha.tasksCompleted / asha.tasksTotal) * 25) + 20),
     totalBeneficiaries: Math.round(50 + Math.random() * 100),
     overdueActivities: Math.max(0, asha.tasksTotal - asha.tasksCompleted - Math.round(Math.random() * 3))
+  };
+
+  // Sample health metrics for the ASHA being previewed
+  const ashaHealthMetrics = {
+    totalRegistrations: Math.round(8 + Math.random() * 8),
+    firstTrimesterCases: {
+      total: Math.round(4 + Math.random() * 6),
+      registered: Math.round(3 + Math.random() * 5)
+    },
+    lastMonthDeliveries: {
+      total: Math.round(1 + Math.random() * 4),
+      institutional: Math.round(1 + Math.random() * 3)
+    },
+    deliveryOutcomes: {
+      liveBirths: Math.round(1 + Math.random() * 3),
+      stillBirths: Math.round(Math.random() * 2),
+      timelyBreastfeeding: Math.round(1 + Math.random() * 2),
+      cordInfections: Math.round(Math.random() * 2),
+      weakNewborns: Math.round(Math.random() * 2)
+    },
+    abortions: Math.round(Math.random() * 3),
+    lastTrimesterCases: {
+      total: Math.round(2 + Math.random() * 5),
+      birthPreparedness: Math.round(2 + Math.random() * 4)
+    },
+    deaths: {
+      maternal: Math.round(Math.random() * 2),
+      child: Math.round(Math.random() * 2)
+    }
   };
 
   return (
@@ -118,6 +148,16 @@ export const AshaPreviewModal = ({ isOpen, onClose, asha }: AshaPreviewModalProp
                   <span className="font-medium">{asha.lastActive}</span>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Health Indicators */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Health Performance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <HealthIndicators data={ashaHealthMetrics} isPersonal={true} />
             </CardContent>
           </Card>
 

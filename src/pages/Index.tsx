@@ -25,6 +25,7 @@ import { TaskOverview } from "@/components/TaskOverview";
 import { AlertsPanel } from "@/components/AlertsPanel";
 import { IncentivesPanel } from "@/components/IncentivesPanel";
 import { PerformanceIndicators } from "@/components/PerformanceIndicators";
+import { HealthIndicators } from "@/components/HealthIndicators";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -54,6 +55,35 @@ const Index = () => {
     activeDays: 28,
     totalBeneficiaries: 1250,
     overdueActivities: 12
+  };
+
+  // Sample health metrics data for the facilitator dashboard (aggregated from all ASHAs)
+  const teamHealthMetrics = {
+    totalRegistrations: 145,
+    firstTrimesterCases: {
+      total: 32,
+      registered: 28
+    },
+    lastMonthDeliveries: {
+      total: 18,
+      institutional: 16
+    },
+    deliveryOutcomes: {
+      liveBirths: 17,
+      stillBirths: 1,
+      timelyBreastfeeding: 15,
+      cordInfections: 1,
+      weakNewborns: 2
+    },
+    abortions: 3,
+    lastTrimesterCases: {
+      total: 22,
+      birthPreparedness: 19
+    },
+    deaths: {
+      maternal: 0,
+      child: 1
+    }
   };
 
   return (
@@ -126,6 +156,19 @@ const Index = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Health Indicators Section */}
+        <Card className="mb-6 shadow-md">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Heart className="h-5 w-5 text-red-500" />
+              Team Health Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <HealthIndicators data={teamHealthMetrics} showTrend={true} />
+          </CardContent>
+        </Card>
 
         {/* Performance Indicators Section */}
         <Card className="mb-6 shadow-md">

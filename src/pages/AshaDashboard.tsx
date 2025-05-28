@@ -26,6 +26,7 @@ import {
   Target
 } from "lucide-react";
 import { PerformanceIndicators } from "@/components/PerformanceIndicators";
+import { HealthIndicators } from "@/components/HealthIndicators";
 
 const AshaDashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState("2024-01");
@@ -155,6 +156,35 @@ const AshaDashboard = () => {
     overdueActivities: 2
   };
 
+  // Personal health metrics for individual ASHA
+  const personalHealthMetrics = {
+    totalRegistrations: 12,
+    firstTrimesterCases: {
+      total: 8,
+      registered: 7
+    },
+    lastMonthDeliveries: {
+      total: 3,
+      institutional: 3
+    },
+    deliveryOutcomes: {
+      liveBirths: 3,
+      stillBirths: 0,
+      timelyBreastfeeding: 3,
+      cordInfections: 0,
+      weakNewborns: 0
+    },
+    abortions: 1,
+    lastTrimesterCases: {
+      total: 5,
+      birthPreparedness: 4
+    },
+    deaths: {
+      maternal: 0,
+      child: 0
+    }
+  };
+
   const getCompletionColor = (completed: number, target: number) => {
     const percentage = (completed / target) * 100;
     if (percentage >= 100) return "text-green-600";
@@ -235,6 +265,19 @@ const AshaDashboard = () => {
             </Select>
           </div>
         </div>
+
+        {/* Health Indicators */}
+        <Card className="mb-6 shadow-md">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Heart className="h-5 w-5 text-red-500" />
+              My Health Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <HealthIndicators data={personalHealthMetrics} isPersonal={true} />
+          </CardContent>
+        </Card>
 
         {/* Performance Indicators */}
         <Card className="mb-6 shadow-md">
