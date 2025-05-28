@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { DateRange } from "react-day-picker";
 import { 
   Users, 
   Heart, 
@@ -18,7 +18,8 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  DollarSign
+  DollarSign,
+  Filter
 } from "lucide-react";
 import { AshaList } from "@/components/AshaList";
 import { PerformanceChart } from "@/components/PerformanceChart";
@@ -27,9 +28,14 @@ import { AlertsPanel } from "@/components/AlertsPanel";
 import { IncentivesPanel } from "@/components/IncentivesPanel";
 import { PerformanceIndicators } from "@/components/PerformanceIndicators";
 import { HealthIndicators } from "@/components/HealthIndicators";
+import { DateRangePicker } from "@/components/DateRangePicker";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(2025, 0, 1), // January 1, 2025
+    to: new Date(2025, 4, 28), // May 28, 2025 (current date)
+  });
 
   const facilitorStats = {
     totalAshas: 20,
@@ -107,6 +113,39 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="p-4 pb-20">
+        {/* Date Range Filter */}
+        <Card className="mb-6 shadow-md">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Filter className="h-5 w-5 text-indigo-600" />
+              Filter ASHA Performance by Date Range
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+              <DateRangePicker 
+                date={dateRange} 
+                onDateChange={setDateRange}
+              />
+              <Button variant="outline" size="sm">
+                Apply Filter
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setDateRange(undefined)}
+              >
+                Clear
+              </Button>
+            </div>
+            {dateRange?.from && dateRange?.to && (
+              <p className="text-sm text-gray-600 mt-2">
+                Showing ASHA performance data from {dateRange.from.toLocaleDateString()} to {dateRange.to.toLocaleDateString()}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
