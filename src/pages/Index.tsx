@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,6 +24,7 @@ import { PerformanceChart } from "@/components/PerformanceChart";
 import { TaskOverview } from "@/components/TaskOverview";
 import { AlertsPanel } from "@/components/AlertsPanel";
 import { IncentivesPanel } from "@/components/IncentivesPanel";
+import { PerformanceIndicators } from "@/components/PerformanceIndicators";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -43,6 +43,18 @@ const Index = () => {
     { id: 3, asha: "Lakshmi K", action: "Missed scheduled visit", time: "6 hours ago", type: "warning" },
     { id: 4, asha: "Sunita Yadav", action: "Updated beneficiary data", time: "8 hours ago", type: "success" }
   ];
+
+  // Sample performance data for the facilitator overview
+  const overallPerformanceData = {
+    completionRate: 86,
+    timelyDelivery: 78,
+    beneficiaryReach: 92,
+    qualityScore: 84,
+    monthlyTrend: 5.2,
+    activeDays: 28,
+    totalBeneficiaries: 1250,
+    overdueActivities: 12
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -114,6 +126,19 @@ const Index = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Performance Indicators Section */}
+        <Card className="mb-6 shadow-md">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <TrendingUp className="h-5 w-5 text-indigo-600" />
+              Team Performance Overview
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PerformanceIndicators data={overallPerformanceData} />
+          </CardContent>
+        </Card>
 
         {/* Performance Overview */}
         <Card className="mb-6 shadow-md">

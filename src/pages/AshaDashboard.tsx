@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +25,7 @@ import {
   Home,
   Target
 } from "lucide-react";
+import { PerformanceIndicators } from "@/components/PerformanceIndicators";
 
 const AshaDashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState("2024-01");
@@ -143,6 +143,18 @@ const AshaDashboard = () => {
   const totalTargets = services.reduce((total, service) => total + service.target, 0);
   const completionRate = Math.round((totalServicesCompleted / totalTargets) * 100);
 
+  // Sample performance data for individual ASHA
+  const personalPerformanceData = {
+    completionRate: 89,
+    timelyDelivery: 85,
+    beneficiaryReach: 94,
+    qualityScore: 88,
+    monthlyTrend: 3.8,
+    activeDays: 26,
+    totalBeneficiaries: 85,
+    overdueActivities: 2
+  };
+
   const getCompletionColor = (completed: number, target: number) => {
     const percentage = (completed / target) * 100;
     if (percentage >= 100) return "text-green-600";
@@ -223,6 +235,16 @@ const AshaDashboard = () => {
             </Select>
           </div>
         </div>
+
+        {/* Performance Indicators */}
+        <Card className="mb-6 shadow-md">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">My Performance Metrics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PerformanceIndicators data={personalPerformanceData} isPersonal={true} />
+          </CardContent>
+        </Card>
 
         {/* Summary Stats */}
         <div className="grid grid-cols-2 gap-3 mb-6">

@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +15,7 @@ import {
   Target,
   Calendar
 } from "lucide-react";
+import { PerformanceIndicators } from "@/components/PerformanceIndicators";
 
 interface AshaPreviewModalProps {
   isOpen: boolean;
@@ -51,6 +51,18 @@ export const AshaPreviewModal = ({ isOpen, onClose, asha }: AshaPreviewModalProp
 
   const completionRate = Math.round((asha.tasksCompleted / asha.tasksTotal) * 100);
   const estimatedIncentives = asha.tasksCompleted * 150; // Rough calculation
+
+  // Sample performance data for the ASHA being previewed
+  const ashaPerformanceData = {
+    completionRate: Math.round((asha.tasksCompleted / asha.tasksTotal) * 100),
+    timelyDelivery: Math.min(95, Math.round((asha.tasksCompleted / asha.tasksTotal) * 100) + Math.random() * 10),
+    beneficiaryReach: Math.min(98, Math.round((asha.tasksCompleted / asha.tasksTotal) * 100) + Math.random() * 15),
+    qualityScore: Math.round(asha.rating * 20), // Convert 5-star rating to percentage
+    monthlyTrend: Math.round((Math.random() - 0.5) * 10 * 100) / 100,
+    activeDays: Math.min(30, Math.round((asha.tasksCompleted / asha.tasksTotal) * 25) + 20),
+    totalBeneficiaries: Math.round(50 + Math.random() * 100),
+    overdueActivities: Math.max(0, asha.tasksTotal - asha.tasksCompleted - Math.round(Math.random() * 3))
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -106,6 +118,16 @@ export const AshaPreviewModal = ({ isOpen, onClose, asha }: AshaPreviewModalProp
                   <span className="font-medium">{asha.lastActive}</span>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Performance Indicators */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Performance Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PerformanceIndicators data={ashaPerformanceData} isPersonal={true} />
             </CardContent>
           </Card>
 
