@@ -13,7 +13,7 @@ interface DashboardHeaderProps {
 export const DashboardHeader = React.memo(({ 
   title, 
   subtitle, 
-  userInitials = "AF", 
+  userInitials = "AD", 
   userImage 
 }: DashboardHeaderProps) => {
   return (
@@ -31,8 +31,8 @@ export const DashboardHeader = React.memo(({
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:block text-right">
-              <p className="text-xs text-emerald-600">Health Facilitator</p>
-              <p className="text-sm font-medium text-emerald-800">Dr. Anita Sharma</p>
+              <p className="text-xs text-emerald-600">ASHA Facilitator</p>
+              <p className="text-sm font-medium text-emerald-800">Anita Devi</p>
             </div>
             <Avatar className="h-10 w-10 ring-2 ring-emerald-200">
               <AvatarImage src={userImage} alt="User avatar" />
