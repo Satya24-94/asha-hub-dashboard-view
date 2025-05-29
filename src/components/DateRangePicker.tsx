@@ -19,14 +19,23 @@ interface DateRangePickerProps {
   className?: string;
 }
 
-export function DateRangePicker({ date, onDateChange, className }: DateRangePickerProps) {
+export const DateRangePicker = React.memo(({ date, onDateChange, className }: DateRangePickerProps) => {
+  const handleClear = React.useCallback(() => {
+    onDateChange(undefined);
+  }, [onDateChange]);
+
+  const handleApplyFilter = React.useCallback(() => {
+    // Apply filter logic would go here in a real app
+    console.log("Applying filter for date range:", date);
+  }, [date]);
+
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("flex items-center gap-4", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             id="date"
-            variant={"outline"}
+            variant="outline"
             className={cn(
               "w-[300px] justify-start text-left font-normal",
               !date && "text-muted-foreground"
@@ -59,6 +68,14 @@ export function DateRangePicker({ date, onDateChange, className }: DateRangePick
           />
         </PopoverContent>
       </Popover>
+      <Button variant="outline" size="sm" onClick={handleApplyFilter}>
+        Apply Filter
+      </Button>
+      <Button variant="ghost" size="sm" onClick={handleClear}>
+        Clear
+      </Button>
     </div>
   );
-}
+});
+
+DateRangePicker.displayName = "DateRangePicker";
