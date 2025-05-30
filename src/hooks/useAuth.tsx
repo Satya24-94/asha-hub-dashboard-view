@@ -41,12 +41,43 @@ export const useAuth = () => {
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
-      setProfile(data);
+      if (error) {
+        // If profile doesn't exist, create a default one
+        if (error.code === 'PGRST116') {
+          console.log('Profile not found, creating default profile');
+          await createDefaultProfile(userId);
+        } else {
+          throw error;
+        }
+      } else {
+        setProfile(data);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createDefaultProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert({
+          id: userId,
+          full_name: 'Demo User',
+          role: 'asha',
+          block: 'Demo Block',
+          district: 'Demo District',
+          state: 'Demo State'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      setProfile(data);
+    } catch (error) {
+      console.error('Error creating profile:', error);
     }
   };
 
@@ -56,6 +87,20 @@ export const useAuth = () => {
       password,
     });
     return { error };
+  };
+
+  const signUp = async (email: string, password: string, userData: { full_name: string, role: 'asha' | 'asha_facilitator' }) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: userData.full_name,
+          role: userData.role
+        }
+      }
+    });
+    return { data, error };
   };
 
   const signOut = async () => {
@@ -68,6 +113,7 @@ export const useAuth = () => {
     profile,
     loading,
     signIn,
+    signUp,
     signOut,
   };
 };
