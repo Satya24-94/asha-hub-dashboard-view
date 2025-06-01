@@ -1,16 +1,12 @@
-{
-  "name": "vite_react_shadcn_ts",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build:dev": "vite build --mode development",
-    "lint": "eslint .",
-    "preview": "vite preview"
-    "migrate": "npx prisma migrate deploy",
-    "build": "npm run migrate && vite build"
-  },
+"scripts": {
+  "dev": "vite",
+  "build:dev": "vite build --mode development",
+  "lint": "eslint .",
+  "preview": "vite preview",
+  "migrate": "npx prisma migrate deploy",
+  "build": "npm run migrate && vite build"
+}
+
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
