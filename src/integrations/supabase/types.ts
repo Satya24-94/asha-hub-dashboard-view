@@ -201,10 +201,10 @@ export type Database = {
           created_at: string | null
           district: string | null
           facilitator_id: string | null
-          full_name: string
+          full_name: string | null
           id: string
           phone: string | null
-          role: Database["public"]["Enums"]["user_role"]
+          role: Database["public"]["Enums"]["user_role"] | null
           state: string | null
           updated_at: string | null
           village: string | null
@@ -214,10 +214,10 @@ export type Database = {
           created_at?: string | null
           district?: string | null
           facilitator_id?: string | null
-          full_name: string
+          full_name?: string | null
           id: string
           phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
+          role?: Database["public"]["Enums"]["user_role"] | null
           state?: string | null
           updated_at?: string | null
           village?: string | null
@@ -227,10 +227,10 @@ export type Database = {
           created_at?: string | null
           district?: string | null
           facilitator_id?: string | null
-          full_name?: string
+          full_name?: string | null
           id?: string
           phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
+          role?: Database["public"]["Enums"]["user_role"] | null
           state?: string | null
           updated_at?: string | null
           village?: string | null
@@ -337,6 +337,30 @@ export type Database = {
           target_live_births?: number | null
           target_pregnant_women?: number | null
           year?: number
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          role: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          role: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          role?: string
         }
         Relationships: []
       }
