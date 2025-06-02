@@ -19,18 +19,29 @@ import { MaternalHealthModule } from "@/components/modules/MaternalHealthModule"
 import { ChildHealthModule } from "@/components/modules/ChildHealthModule";
 import { ReferralTrackingModule } from "@/components/modules/ReferralTrackingModule";
 import { AshaFunctionalityModule } from "@/components/modules/AshaFunctionalityModule";
+import { AshaList } from "@/components/AshaList";
+import { InteractiveCard } from "@/components/InteractiveCard";
 
 export const FacilitatorDashboard = () => {
-  const [activeTab, setActiveTab] = useState("maternal");
+  const [activeTab, setActiveTab] = useState("ashas");
   const { profile, signOut } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
   };
 
+  // Sample data for the facilitator overview
+  const facilitatorStats = {
+    totalAshas: 20,
+    activeAshas: 17,
+    completionRate: 87,
+    totalBeneficiaries: 1845,
+    monthlyTrend: 5.2
+  };
+
   return (
     <div className="min-h-screen health-gradient health-pattern">
-      <div className="bg-white shadow-sm border-b border-emerald-100 sticky top-0 z-50">
+      <div className="bg-white shadow-sm border-b border-emerald-100 sticky top-0 z-40">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -57,7 +68,7 @@ export const FacilitatorDashboard = () => {
 
       <main className="p-4 pb-20 max-w-7xl mx-auto">
         {/* Welcome Banner */}
-        <div className="mb-6 relative overflow-hidden">
+        <div className="mb-6 relative overflow-hidden animate-fade-in">
           <Card className="bg-gradient-to-r from-emerald-50 to-blue-50 border-emerald-200 shadow-lg">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
@@ -74,11 +85,56 @@ export const FacilitatorDashboard = () => {
           </Card>
         </div>
 
+        {/* Quick Stats Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <InteractiveCard
+            title="Total ASHAs"
+            value={facilitatorStats.totalAshas}
+            trend={2.1}
+            description="ASHA workers under supervision"
+            icon={Users}
+            className="bg-gradient-to-br from-blue-500 to-blue-600 text-white"
+          />
+          <InteractiveCard
+            title="Active ASHAs"
+            value={facilitatorStats.activeAshas}
+            target={facilitatorStats.totalAshas}
+            trend={facilitatorStats.monthlyTrend}
+            description="Currently active workers"
+            icon={Activity}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white"
+          />
+          <InteractiveCard
+            title="Completion Rate"
+            value={facilitatorStats.completionRate}
+            target={100}
+            trend={3.8}
+            description="Overall task completion"
+            icon={TrendingUp}
+            className="bg-gradient-to-br from-purple-500 to-purple-600 text-white"
+          />
+          <InteractiveCard
+            title="Beneficiaries"
+            value={facilitatorStats.totalBeneficiaries}
+            trend={7.3}
+            description="Total people served"
+            icon={Heart}
+            className="bg-gradient-to-br from-pink-500 to-pink-600 text-white"
+          />
+        </div>
+
         {/* Main Dashboard Modules */}
         <Card className="shadow-lg border-slate-200">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="border-b bg-gradient-to-r from-slate-50 to-gray-50">
-              <TabsList className="grid w-full grid-cols-4 bg-transparent h-auto p-1">
+              <TabsList className="grid w-full grid-cols-5 bg-transparent h-auto p-1">
+                <TabsTrigger 
+                  value="ashas" 
+                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-1"
+                >
+                  <Users className="h-4 w-4" />
+                  ASHA Team
+                </TabsTrigger>
                 <TabsTrigger 
                   value="maternal" 
                   className="text-xs data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-1"
@@ -109,6 +165,10 @@ export const FacilitatorDashboard = () => {
                 </TabsTrigger>
               </TabsList>
             </div>
+
+            <TabsContent value="ashas" className="p-4">
+              <AshaList />
+            </TabsContent>
 
             <TabsContent value="maternal" className="p-4">
               <MaternalHealthModule />

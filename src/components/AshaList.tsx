@@ -1,22 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AshaPreviewModal } from "@/components/AshaPreviewModal";
+import { AshaCard } from "@/components/AshaCard";
 import { 
-  MapPin, 
-  Phone, 
-  Star, 
-  Activity,
   Search,
-  Filter,
-  Eye,
-  CheckCircle,
-  Clock,
-  AlertCircle,
-  ExternalLink
+  Filter
 } from "lucide-react";
 import { useState } from "react";
 
@@ -26,7 +16,7 @@ export const AshaList = () => {
   const [previewAsha, setPreviewAsha] = useState<any>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  // Updated to include 20 ASHAs as requested
+  // Enhanced ASHA data with more realistic information
   const ashas = [
     { id: 1, name: "Priya Sharma", village: "Rampur", phone: "+91 9876543210", rating: 4.8, tasksCompleted: 45, tasksTotal: 50, status: "active", lastActive: "2 hours ago" },
     { id: 2, name: "Meera Devi", village: "Govindpur", phone: "+91 9876543211", rating: 4.6, tasksCompleted: 38, tasksTotal: 45, status: "active", lastActive: "4 hours ago" },
@@ -48,20 +38,7 @@ export const AshaList = () => {
     { id: 18, name: "Asha Devi", village: "Darbhanga", phone: "+91 9876543227", rating: 4.8, tasksCompleted: 46, tasksTotal: 48, status: "active", lastActive: "1 hour ago" },
     { id: 19, name: "Renu Singh", village: "Begusarai", phone: "+91 9876543228", rating: 4.6, tasksCompleted: 40, tasksTotal: 45, status: "active", lastActive: "3 hours ago" },
     { id: 20, name: "Sunita Kumari", village: "Samastipur", phone: "+91 9876543229", rating: 4.4, tasksCompleted: 38, tasksTotal: 43, status: "active", lastActive: "4 hours ago" }
-  ];
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge className="bg-green-100 text-green-800 border-green-200"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>;
-      case "inactive":
-        return <Badge className="bg-red-100 text-red-800 border-red-200"><AlertCircle className="h-3 w-3 mr-1" />Inactive</Badge>;
-      case "warning":
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200"><Clock className="h-3 w-3 mr-1" />Warning</Badge>;
-      default:
-        return <Badge>Unknown</Badge>;
-    }
-  };
+  ] as const;
 
   const filteredAshas = ashas.filter(asha => {
     const matchesSearch = asha.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -80,7 +57,7 @@ export const AshaList = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div>
         <h2 className="text-lg font-semibold mb-2">ASHA Workers Management</h2>
         <p className="text-sm text-gray-600">Manage and monitor your team of {ashas.length} ASHA workers</p>
@@ -93,7 +70,7 @@ export const AshaList = () => {
             placeholder="Search by name or village..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -112,79 +89,23 @@ export const AshaList = () => {
 
       {/* ASHA Cards */}
       <div className="space-y-4">
-        {filteredAshas.map((asha) => (
-          <Card key={asha.id} className="shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-4">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src="/placeholder.svg" />
-                  <AvatarFallback className="bg-indigo-100 text-indigo-600">
-                    {asha.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-semibold text-gray-900">{asha.name}</h3>
-                    {getStatusBadge(asha.status)}
-                  </div>
-                  
-                  <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{asha.village}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Phone className="h-3 w-3" />
-                      <span>{asha.phone}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">{asha.rating}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Activity className="h-4 w-4 text-green-500" />
-                        <span className="text-sm">{asha.tasksCompleted}/{asha.tasksTotal} tasks</span>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        onClick={() => handlePreview(asha)}
-                        className="text-xs"
-                      >
-                        <Eye className="h-3 w-3 mr-1" />
-                        Preview
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleViewDashboard(asha.id)}
-                        className="text-xs"
-                      >
-                        <ExternalLink className="h-3 w-3 mr-1" />
-                        Dashboard
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-2 text-xs text-gray-500">
-                    Last active: {asha.lastActive}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {filteredAshas.map((asha, index) => (
+          <div 
+            key={asha.id} 
+            className="animate-fade-in" 
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <AshaCard
+              asha={asha}
+              onViewDashboard={handleViewDashboard}
+              onPreview={handlePreview}
+            />
+          </div>
         ))}
       </div>
 
       {filteredAshas.length === 0 && (
-        <Card className="p-8 text-center">
+        <Card className="p-8 text-center animate-fade-in">
           <p className="text-gray-500">No ASHA workers found matching your criteria.</p>
         </Card>
       )}
