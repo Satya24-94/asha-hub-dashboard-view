@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:dev": "vite build --mode development",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "migrate": "npx prisma migrate deploy",
-    "build": "npm run migrate && vite build"
+    "build": "npm run migrate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
