@@ -29,7 +29,6 @@ export const InteractiveCard = ({
   icon: Icon 
 }: InteractiveCardProps) => {
   const [expanded, setExpanded] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   // Format numbers to one decimal place
   const formattedValue = typeof value === 'number' ? value.toFixed(1) : value;
@@ -42,9 +41,7 @@ export const InteractiveCard = ({
   return (
     <TooltipProvider>
       <Card 
-        className={`cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2 hover:scale-105 border-emerald-100 bg-gradient-to-br from-white to-emerald-50 ${className}`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        className={`cursor-pointer smooth-transition hover:shadow-md border-gray-200 bg-white ${className}`}
         onClick={() => setExpanded(!expanded)}
       >
         <CardHeader className="pb-2">
@@ -53,8 +50,8 @@ export const InteractiveCard = ({
               {Icon && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="p-1.5 bg-emerald-100 rounded-full transition-all duration-300 hover:bg-emerald-200 hover:scale-110">
-                      <Icon className="h-4 w-4 text-emerald-600 transition-colors duration-300 hover:text-emerald-700" />
+                    <div className="p-1.5 bg-blue-100 rounded-full smooth-transition hover:bg-blue-200">
+                      <Icon className="h-4 w-4 text-blue-600" />
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -62,13 +59,13 @@ export const InteractiveCard = ({
                   </TooltipContent>
                 </Tooltip>
               )}
-              <span className="text-emerald-800 font-semibold">{title}</span>
+              <span className="text-gray-800 font-semibold">{title}</span>
             </div>
             <div className="flex items-center gap-2">
               {trend !== undefined && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className={`flex items-center text-xs px-2 py-1 rounded-full transition-all duration-300 hover:scale-110 ${
+                    <div className={`flex items-center text-xs px-2 py-1 rounded-full smooth-transition ${
                       isPositiveTrend 
                         ? 'text-green-700 bg-green-100 hover:bg-green-200' 
                         : 'text-red-700 bg-red-100 hover:bg-red-200'
@@ -84,10 +81,10 @@ export const InteractiveCard = ({
               )}
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="p-1 rounded-full hover:bg-emerald-100 transition-all duration-300 hover:scale-110">
+                  <div className="p-1 rounded-full hover:bg-gray-100 smooth-transition">
                     {expanded ? 
-                      <ChevronUp className="h-4 w-4 text-emerald-600" /> : 
-                      <ChevronDown className="h-4 w-4 text-emerald-600" />
+                      <ChevronUp className="h-4 w-4 text-gray-600" /> : 
+                      <ChevronDown className="h-4 w-4 text-gray-600" />
                     }
                   </div>
                 </TooltipTrigger>
@@ -101,13 +98,13 @@ export const InteractiveCard = ({
         <CardContent>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-3xl font-bold text-emerald-900 transition-all duration-300 hover:text-emerald-700">
+              <span className="text-3xl font-bold text-gray-900">
                 {formattedValue}
               </span>
               {target && (
                 <Badge 
                   variant={percentage >= 80 ? "default" : percentage >= 60 ? "secondary" : "destructive"}
-                  className="animate-pulse hover:animate-none transition-all duration-300 hover:scale-110"
+                  className="smooth-transition"
                 >
                   {percentage}%
                 </Badge>
@@ -116,23 +113,23 @@ export const InteractiveCard = ({
             
             {target && (
               <div className="space-y-2">
-                <div className="flex justify-between text-xs text-emerald-700">
+                <div className="flex justify-between text-xs text-gray-600">
                   <span className="font-medium">Progress</span>
                   <span>Target: {formattedTarget}</span>
                 </div>
                 <Progress 
                   value={percentage} 
-                  className={`h-2 transition-all duration-500 ${isHovered ? 'h-3' : ''} bg-emerald-100`}
+                  className="h-2 bg-gray-100"
                 />
               </div>
             )}
             
             {description && (
-              <p className="text-xs text-emerald-700 bg-emerald-50 p-2 rounded-md">{description}</p>
+              <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded-md">{description}</p>
             )}
             
             {expanded && children && (
-              <div className="mt-4 p-4 bg-emerald-50 rounded-lg animate-fade-in border border-emerald-200">
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                 {children}
               </div>
             )}

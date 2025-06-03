@@ -13,14 +13,12 @@ import {
   Calendar
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { DashboardHeader } from "@/components/DashboardHeader";
-import { BottomNavigation } from "@/components/BottomNavigation";
 import { MaternalHealthModule } from "@/components/modules/MaternalHealthModule";
 import { ChildHealthModule } from "@/components/modules/ChildHealthModule";
 import { ReferralTrackingModule } from "@/components/modules/ReferralTrackingModule";
 import { AshaFunctionalityModule } from "@/components/modules/AshaFunctionalityModule";
 import { AshaList } from "@/components/AshaList";
-import { InteractiveCard } from "@/components/InteractiveCard";
+import { StatsCard } from "@/components/StatsCard";
 
 export const FacilitatorDashboard = () => {
   const [activeTab, setActiveTab] = useState("ashas");
@@ -34,31 +32,32 @@ export const FacilitatorDashboard = () => {
   const facilitatorStats = {
     totalAshas: 20,
     activeAshas: 17,
-    completionRate: 87,
+    completionRate: 87.5,
     totalBeneficiaries: 1845,
     monthlyTrend: 5.2
   };
 
   return (
-    <div className="min-h-screen health-gradient health-pattern">
-      <div className="bg-white shadow-sm border-b border-emerald-100 sticky top-0 z-40">
-        <div className="px-4 py-4">
+    <div className="min-h-screen bg-gray-50">
+      {/* Clean Header */}
+      <div className="bg-white border-b shadow-sm sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-100 rounded-full">
+              <div className="p-2 bg-emerald-100 rounded-lg">
                 <Heart className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-emerald-800">ASHA Facilitator Dashboard</h1>
-                <p className="text-sm text-emerald-600">Community Health Management Portal</p>
+                <h1 className="text-xl font-bold text-gray-900">ASHA Facilitator Dashboard</h1>
+                <p className="text-sm text-gray-600">Community Health Management Portal</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="hidden sm:block text-right">
-                <p className="text-xs text-emerald-600">ASHA Facilitator</p>
-                <p className="text-sm font-medium text-emerald-800">{profile?.full_name}</p>
+                <p className="text-xs text-gray-500">ASHA Facilitator</p>
+                <p className="text-sm font-medium text-gray-900">{profile?.full_name}</p>
               </div>
-              <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <Button variant="outline" size="sm" onClick={handleSignOut} className="smooth-transition">
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
@@ -66,130 +65,114 @@ export const FacilitatorDashboard = () => {
         </div>
       </div>
 
-      <main className="p-4 pb-20 max-w-7xl mx-auto">
-        {/* Welcome Banner */}
-        <div className="mb-6 relative overflow-hidden animate-fade-in">
-          <Card className="bg-gradient-to-r from-emerald-50 to-blue-50 border-emerald-200 shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-white rounded-full shadow-md">
-                  <Users className="h-8 w-8 text-emerald-600" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-emerald-800 mb-1">Welcome back, {profile?.full_name}!</h2>
-                  <p className="text-emerald-700">Managing health outcomes for {profile?.block} block</p>
-                  <p className="text-sm text-emerald-600 mt-1">Monitor and support your ASHA team's performance</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <main className="max-w-7xl mx-auto p-6 space-y-6">
+        {/* Welcome Section */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <Users className="h-8 w-8 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Welcome back, {profile?.full_name}!</h2>
+              <p className="text-gray-600">Managing health outcomes for {profile?.block} block</p>
+              <p className="text-sm text-gray-500 mt-1">Monitor and support your ASHA team's performance</p>
+            </div>
+          </div>
         </div>
 
-        {/* Quick Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <InteractiveCard
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatsCard
             title="Total ASHAs"
             value={facilitatorStats.totalAshas}
-            trend={2.1}
-            description="ASHA workers under supervision"
             icon={Users}
-            className="bg-gradient-to-br from-blue-500 to-blue-600 text-white"
+            gradient="blue-gradient"
           />
-          <InteractiveCard
+          <StatsCard
             title="Active ASHAs"
             value={facilitatorStats.activeAshas}
-            target={facilitatorStats.totalAshas}
-            trend={facilitatorStats.monthlyTrend}
-            description="Currently active workers"
             icon={Activity}
-            className="bg-gradient-to-br from-green-500 to-green-600 text-white"
+            gradient="green-gradient"
           />
-          <InteractiveCard
+          <StatsCard
             title="Completion Rate"
-            value={facilitatorStats.completionRate}
-            target={100}
-            trend={3.8}
-            description="Overall task completion"
+            value={`${facilitatorStats.completionRate}%`}
             icon={TrendingUp}
-            className="bg-gradient-to-br from-purple-500 to-purple-600 text-white"
+            gradient="purple-gradient"
           />
-          <InteractiveCard
+          <StatsCard
             title="Beneficiaries"
-            value={facilitatorStats.totalBeneficiaries}
-            trend={7.3}
-            description="Total people served"
+            value={facilitatorStats.totalBeneficiaries.toLocaleString()}
             icon={Heart}
-            className="bg-gradient-to-br from-pink-500 to-pink-600 text-white"
+            gradient="pink-gradient"
           />
         </div>
 
-        {/* Main Dashboard Modules */}
-        <Card className="shadow-lg border-slate-200">
+        {/* Main Content Tabs */}
+        <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="border-b bg-gradient-to-r from-slate-50 to-gray-50">
-              <TabsList className="grid w-full grid-cols-5 bg-transparent h-auto p-1">
+            <div className="border-b bg-gray-50">
+              <TabsList className="grid w-full grid-cols-5 bg-transparent h-12 p-0">
                 <TabsTrigger 
                   value="ashas" 
-                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-1"
+                  className="data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full"
                 >
                   <Users className="h-4 w-4" />
-                  ASHA Team
+                  <span className="hidden sm:inline">ASHA Team</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="maternal" 
-                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-1"
+                  className="data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full"
                 >
                   <Baby className="h-4 w-4" />
-                  Maternal Health
+                  <span className="hidden sm:inline">Maternal</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="child" 
-                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-1"
+                  className="data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full"
                 >
                   <Heart className="h-4 w-4" />
-                  Child Health
+                  <span className="hidden sm:inline">Child Health</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="referrals" 
-                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-1"
+                  className="data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full"
                 >
                   <Activity className="h-4 w-4" />
-                  Referrals
+                  <span className="hidden sm:inline">Referrals</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="functionality" 
-                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-1"
+                  className="data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full"
                 >
                   <TrendingUp className="h-4 w-4" />
-                  ASHA Tasks
+                  <span className="hidden sm:inline">Tasks</span>
                 </TabsTrigger>
               </TabsList>
             </div>
 
-            <TabsContent value="ashas" className="p-4">
+            <TabsContent value="ashas" className="p-6">
               <AshaList />
             </TabsContent>
 
-            <TabsContent value="maternal" className="p-4">
+            <TabsContent value="maternal" className="p-6">
               <MaternalHealthModule />
             </TabsContent>
 
-            <TabsContent value="child" className="p-4">
+            <TabsContent value="child" className="p-6">
               <ChildHealthModule />
             </TabsContent>
 
-            <TabsContent value="referrals" className="p-4">
+            <TabsContent value="referrals" className="p-6">
               <ReferralTrackingModule />
             </TabsContent>
 
-            <TabsContent value="functionality" className="p-4">
+            <TabsContent value="functionality" className="p-6">
               <AshaFunctionalityModule />
             </TabsContent>
           </Tabs>
-        </Card>
+        </div>
       </main>
-
-      <BottomNavigation />
     </div>
   );
 };

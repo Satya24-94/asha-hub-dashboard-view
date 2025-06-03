@@ -18,11 +18,11 @@ export const PerformanceMetric = React.memo(({ label, value, showPercentage = tr
     <TooltipProvider>
       <div className={`space-y-3 ${className}`}>
         <div className="flex justify-between items-center">
-          <span className="text-sm font-semibold text-emerald-800">{label}</span>
+          <span className="text-sm font-semibold text-gray-700">{label}</span>
           {showPercentage && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="text-sm font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md hover:bg-emerald-100 transition-colors cursor-pointer">
+                <span className="text-sm font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md hover:bg-emerald-100 smooth-transition cursor-pointer">
                   {formattedValue}%
                 </span>
               </TooltipTrigger>
@@ -34,7 +34,7 @@ export const PerformanceMetric = React.memo(({ label, value, showPercentage = tr
         </div>
         <Progress 
           value={value} 
-          className="h-3 bg-emerald-100 hover:h-4 transition-all duration-300" 
+          className="h-3 bg-gray-100 smooth-transition" 
           aria-label={`${label}: ${formattedValue}${showPercentage ? '%' : ''}`}
         />
       </div>
