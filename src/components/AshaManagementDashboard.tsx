@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Users, MapPin, Phone, TrendingUp, TrendingDown, Edit, Trash2, Download, FileSpreadsheet, User, Target } from 'lucide-react';
+import { Plus, Users, MapPin, Phone, TrendingUp, TrendingDown, Edit, Trash2, Download, FileSpreadsheet, User, Target, Activity } from 'lucide-react';
 import { AddAshaModal } from '@/components/AddAshaModal';
 import { AshaProfileModal } from '@/components/AshaProfileModal';
 import { CombinedPerformanceModal } from '@/components/CombinedPerformanceModal';
@@ -264,168 +263,188 @@ export const AshaManagementDashboard = () => {
   const averagePerformance = ashas.length > 0 ? Math.round(ashas.reduce((sum, asha) => sum + asha.performance, 0) / ashas.length) : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Professional Header */}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/30">
+      <div className="max-w-7xl mx-auto p-6">
+        {/* Enhanced Header with ASHA Programme Branding */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex-1 mr-6">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">ASHA Performance Dashboard</h1>
-              <p className="text-gray-600">Comprehensive management and monitoring of ASHA workers</p>
-            </div>
-            <div className="flex gap-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-green-100 rounded-xl">
+                  <Activity className="h-8 w-8 text-green-600" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900 mb-1">ASHA Performance Dashboard</h1>
+                  <p className="text-gray-600 text-lg">Accredited Social Health Activist Programme</p>
+                  <p className="text-sm text-green-600 font-medium">Ministry of Health & Family Welfare, Government of India</p>
+                </div>
+              </div>
+              
               {selectedAshas.length > 0 && (
-                <>
+                <div className="flex gap-3">
                   <Button 
                     onClick={handleViewCombinedPerformance}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-md"
+                    className="bg-green-600 hover:bg-green-700 text-white shadow-sm"
                   >
                     <TrendingUp className="h-4 w-4 mr-2" />
-                    Combined Performance ({selectedAshas.length})
+                    Combined Analysis ({selectedAshas.length})
                   </Button>
                   <Button 
                     onClick={handleExportAll}
                     variant="outline"
-                    className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 shadow-md"
+                    className="border-green-600 text-green-600 hover:bg-green-50 shadow-sm"
                   >
                     <FileSpreadsheet className="h-4 w-4 mr-2" />
                     Export Selected
                   </Button>
-                </>
+                </div>
               )}
-              <Button 
-                onClick={() => setIsAddModalOpen(true)}
-                className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-full h-14 w-14 p-0 shadow-lg hover:shadow-xl transition-all duration-200"
-                disabled={ashas.length >= 20}
-                title="Add ASHA Worker"
-              >
-                <Plus className="h-7 w-7" />
-              </Button>
             </div>
           </div>
 
-          {/* Professional Summary Stats */}
+          {/* Professional Summary Stats with Target Progress */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-white shadow-sm border-0 overflow-hidden">
+            <Card className="asha-card overflow-hidden">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">Total ASHAs</p>
-                    <p className="text-3xl font-bold text-gray-900">{ashas.length}/{targets.totalAshas}</p>
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-3">
-                      <div 
-                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${(ashas.length / targets.totalAshas) * 100}%` }}
-                      />
-                    </div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-blue-100 rounded-xl">
+                    <Users className="h-6 w-6 text-blue-600" />
                   </div>
-                  <div className="p-3 bg-blue-50 rounded-xl">
-                    <Users className="h-8 w-8 text-blue-600" />
+                  <Badge variant="outline" className="text-xs font-medium">
+                    {Math.round((ashas.length / targets.totalAshas) * 100)}%
+                  </Badge>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-gray-600">Total ASHAs</h3>
+                  <p className="text-2xl font-bold text-gray-900">{ashas.length}</p>
+                  <p className="text-xs text-gray-500">Target: {targets.totalAshas}</p>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-500 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min((ashas.length / targets.totalAshas) * 100, 100)}%` }}
+                    />
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white shadow-sm border-0 overflow-hidden">
+            <Card className="asha-card overflow-hidden">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">Total Population</p>
-                    <p className="text-3xl font-bold text-gray-900">{totalPopulation.toLocaleString()}/{targets.totalPopulation.toLocaleString()}</p>
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-3">
-                      <div 
-                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min((totalPopulation / targets.totalPopulation) * 100, 100)}%` }}
-                      />
-                    </div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-green-100 rounded-xl">
+                    <MapPin className="h-6 w-6 text-green-600" />
                   </div>
-                  <div className="p-3 bg-green-50 rounded-xl">
-                    <MapPin className="h-8 w-8 text-green-600" />
+                  <Badge variant="outline" className="text-xs font-medium">
+                    {Math.round((totalPopulation / targets.totalPopulation) * 100)}%
+                  </Badge>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-gray-600">Total Population Coverage</h3>
+                  <p className="text-2xl font-bold text-gray-900">{totalPopulation.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500">Target: {targets.totalPopulation.toLocaleString()}</p>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-green-500 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min((totalPopulation / targets.totalPopulation) * 100, 100)}%` }}
+                    />
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white shadow-sm border-0 overflow-hidden">
+            <Card className="asha-card overflow-hidden">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">Avg Performance</p>
-                    <p className="text-3xl font-bold text-gray-900">{averagePerformance}%</p>
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-3">
-                      <div 
-                        className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${averagePerformance}%` }}
-                      />
-                    </div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-purple-100 rounded-xl">
+                    <Target className="h-6 w-6 text-purple-600" />
                   </div>
-                  <div className="p-3 bg-purple-50 rounded-xl">
-                    <Target className="h-8 w-8 text-purple-600" />
+                  <Badge 
+                    variant={averagePerformance >= 80 ? "default" : "secondary"}
+                    className="text-xs font-medium"
+                  >
+                    {averagePerformance >= 80 ? 'Good' : 'Needs Improvement'}
+                  </Badge>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-gray-600">Average Performance</h3>
+                  <p className="text-2xl font-bold text-gray-900">{averagePerformance}%</p>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-purple-500 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${averagePerformance}%` }}
+                    />
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white shadow-sm border-0 overflow-hidden">
+            <Card className="asha-card overflow-hidden">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">Active ASHAs</p>
-                    <p className="text-3xl font-bold text-gray-900">{ashas.filter(a => a.status === 'active').length}/{targets.activeAshas}</p>
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-3">
-                      <div 
-                        className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${(ashas.filter(a => a.status === 'active').length / targets.activeAshas) * 100}%` }}
-                      />
-                    </div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-emerald-100 rounded-xl">
+                    <Activity className="h-6 w-6 text-emerald-600" />
                   </div>
-                  <div className="p-3 bg-emerald-50 rounded-xl">
-                    <div className="h-8 w-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                      <div className="h-4 w-4 bg-emerald-500 rounded-full" />
-                    </div>
+                  <Badge variant="outline" className="text-xs font-medium">
+                    {Math.round((ashas.filter(a => a.status === 'active').length / targets.activeAshas) * 100)}%
+                  </Badge>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-gray-600">Active ASHAs</h3>
+                  <p className="text-2xl font-bold text-gray-900">{ashas.filter(a => a.status === 'active').length}</p>
+                  <p className="text-xs text-gray-500">Target: {targets.activeAshas}</p>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min((ashas.filter(a => a.status === 'active').length / targets.activeAshas) * 100, 100)}%` }}
+                    />
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Search and Select All */}
-          <div className="mb-6 flex items-center gap-4">
-            <div className="flex-1 max-w-md">
-              <Input
-                placeholder="Search ASHAs by name or village..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-11 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-              />
-            </div>
-            {filteredAshas.length > 0 && (
-              <div className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg border border-gray-200">
-                <Checkbox
-                  id="select-all"
-                  checked={selectedAshas.length === filteredAshas.length}
-                  onCheckedChange={handleSelectAll}
+          {/* Enhanced Search and Controls */}
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="flex-1 max-w-md">
+                <Input
+                  placeholder="Search ASHAs by name or village..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="h-11 border-gray-300 focus:border-green-500 focus:ring-green-500"
                 />
-                <label htmlFor="select-all" className="text-sm font-medium text-gray-700">
-                  Select All ({filteredAshas.length})
-                </label>
               </div>
-            )}
+              {filteredAshas.length > 0 && (
+                <div className="flex items-center space-x-3 bg-gray-50 px-4 py-2 rounded-lg border">
+                  <Checkbox
+                    id="select-all"
+                    checked={selectedAshas.length === filteredAshas.length}
+                    onCheckedChange={handleSelectAll}
+                  />
+                  <label htmlFor="select-all" className="text-sm font-medium text-gray-700">
+                    Select All ({filteredAshas.length})
+                  </label>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* ASHA Cards Grid */}
+        {/* Enhanced ASHA Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredAshas.map((asha) => (
-            <Card key={asha.id} className="bg-white hover:shadow-lg transition-all duration-300 border-0 shadow-sm">
+            <Card key={asha.id} className="asha-card hover:shadow-lg transition-all duration-300 border-0">
               <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <Checkbox
                       checked={selectedAshas.includes(asha.id)}
                       onCheckedChange={(checked) => handleSelectAsha(asha.id, checked as boolean)}
                     />
-                    <Badge variant={asha.status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                    <Badge 
+                      variant={asha.status === 'active' ? 'default' : 'secondary'} 
+                      className={`text-xs ${asha.status === 'active' ? 'bg-green-100 text-green-700' : ''}`}
+                    >
                       {asha.status}
                     </Badge>
                   </div>
@@ -446,7 +465,7 @@ export const AshaManagementDashboard = () => {
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12 border-2 border-gray-100">
                     <AvatarImage src={asha.profileImage} alt={asha.name} />
-                    <AvatarFallback className="bg-emerald-100 text-emerald-700 font-bold">
+                    <AvatarFallback className="bg-green-100 text-green-700 font-bold">
                       {asha.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
@@ -455,23 +474,23 @@ export const AshaManagementDashboard = () => {
               </CardHeader>
               
               <CardContent className="space-y-4">
-                <div className="space-y-2 text-sm text-gray-600">
+                <div className="space-y-3 text-sm text-gray-600">
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-2 text-gray-400" />
-                    {asha.village}
+                    <span className="font-medium">{asha.village}</span>
                   </div>
                   <div className="flex items-center">
                     <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                    {asha.phone}
+                    <span>{asha.phone}</span>
                   </div>
                   <div className="flex items-center">
                     <Users className="h-4 w-4 mr-2 text-gray-400" />
-                    {asha.population.toLocaleString()} people
+                    <span>{asha.population.toLocaleString()} people</span>
                   </div>
                 </div>
                 
                 <div className="pt-3 border-t border-gray-100">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-sm font-medium text-gray-700">Performance</span>
                     <div className="flex items-center gap-2">
                       {getTrendIcon(asha.trend)}
@@ -479,9 +498,9 @@ export const AshaManagementDashboard = () => {
                     </div>
                   </div>
                   
-                  <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
-                      className="bg-gradient-to-r from-emerald-500 to-green-500 h-2 rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-500"
                       style={{ width: `${asha.performance}%` }}
                     />
                   </div>
@@ -512,23 +531,37 @@ export const AshaManagementDashboard = () => {
           ))}
         </div>
 
+        {/* Enhanced Empty State */}
         {ashas.length === 0 && (
           <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100">
-            <div className="p-4 bg-gray-50 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
-              <Users className="h-10 w-10 text-gray-400" />
+            <div className="p-6 bg-green-50 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+              <Users className="h-12 w-12 text-green-600" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No ASHAs Added</h3>
-            <p className="text-gray-600 mb-6">Start building your team by adding your first ASHA worker</p>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Welcome to ASHA Management</h3>
+            <p className="text-gray-600 mb-2">Start building your ASHA team for better community health coverage</p>
+            <p className="text-sm text-gray-500 mb-8">Add ASHAs from your designated area to begin monitoring and supporting their work</p>
             <Button 
               onClick={() => setIsAddModalOpen(true)}
-              className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-full px-8 py-3"
+              className="asha-button-primary rounded-full px-8 py-3"
             >
               <Plus className="h-5 w-5 mr-2" />
-              Add First ASHA
+              Add Your First ASHA
             </Button>
           </div>
         )}
       </div>
+
+      {/* Floating Add Button */}
+      {ashas.length > 0 && (
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="floating-add-button"
+          disabled={ashas.length >= 20}
+          title="Add ASHA Worker"
+        >
+          <Plus className="h-6 w-6" />
+        </button>
+      )}
 
       <AddAshaModal 
         isOpen={isAddModalOpen}

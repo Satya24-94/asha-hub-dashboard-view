@@ -1,117 +1,240 @@
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AshaPreviewModal } from "@/components/AshaPreviewModal";
-import { AshaCard } from "@/components/AshaCard";
-import { 
-  Search,
-  Filter
-} from "lucide-react";
-import { useState } from "react";
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Users, MapPin, Phone, TrendingUp, TrendingDown, Eye, Download, Filter, Search } from 'lucide-react';
 
-export const AshaList = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [previewAsha, setPreviewAsha] = useState<any>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+const AshaList = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [performanceFilter, setPerformanceFilter] = useState('all');
 
-  // Enhanced ASHA data with more realistic information
+  // Sample ASHA data
   const ashas = [
-    { id: 1, name: "Priya Sharma", village: "Rampur", phone: "+91 9876543210", rating: 4.8, tasksCompleted: 45, tasksTotal: 50, status: "active", lastActive: "2 hours ago" },
-    { id: 2, name: "Meera Devi", village: "Govindpur", phone: "+91 9876543211", rating: 4.6, tasksCompleted: 38, tasksTotal: 45, status: "active", lastActive: "4 hours ago" },
-    { id: 3, name: "Lakshmi K", village: "Sundarganj", phone: "+91 9876543212", rating: 4.2, tasksCompleted: 32, tasksTotal: 48, status: "inactive", lastActive: "2 days ago" },
-    { id: 4, name: "Sunita Yadav", village: "Krishnanagar", phone: "+91 9876543213", rating: 4.9, tasksCompleted: 50, tasksTotal: 50, status: "active", lastActive: "1 hour ago" },
-    { id: 5, name: "Radha Singh", village: "Shivpur", phone: "+91 9876543214", rating: 4.4, tasksCompleted: 40, tasksTotal: 46, status: "active", lastActive: "3 hours ago" },
-    { id: 6, name: "Kavita Rani", village: "Madhubani", phone: "+91 9876543215", rating: 4.7, tasksCompleted: 43, tasksTotal: 47, status: "active", lastActive: "5 hours ago" },
-    { id: 7, name: "Anita Kumari", village: "Bishunpur", phone: "+91 9876543216", rating: 4.3, tasksCompleted: 35, tasksTotal: 42, status: "warning", lastActive: "1 day ago" },
-    { id: 8, name: "Rekha Devi", village: "Janakpur", phone: "+91 9876543217", rating: 4.5, tasksCompleted: 41, tasksTotal: 45, status: "active", lastActive: "2 hours ago" },
-    { id: 9, name: "Sita Kumari", village: "Lalpur", phone: "+91 9876543218", rating: 4.1, tasksCompleted: 28, tasksTotal: 40, status: "inactive", lastActive: "3 days ago" },
-    { id: 10, name: "Geeta Sharma", village: "Sonpur", phone: "+91 9876543219", rating: 4.8, tasksCompleted: 47, tasksTotal: 49, status: "active", lastActive: "1 hour ago" },
-    { id: 11, name: "Poonam Devi", village: "Bettiah", phone: "+91 9876543220", rating: 4.6, tasksCompleted: 39, tasksTotal: 44, status: "active", lastActive: "4 hours ago" },
-    { id: 12, name: "Mamta Singh", village: "Motihari", phone: "+91 9876543221", rating: 4.4, tasksCompleted: 36, tasksTotal: 43, status: "active", lastActive: "6 hours ago" },
-    { id: 13, name: "Shanti Devi", village: "Bagaha", phone: "+91 9876543222", rating: 4.2, tasksCompleted: 33, tasksTotal: 41, status: "warning", lastActive: "1 day ago" },
-    { id: 14, name: "Urmila Kumari", village: "Siwan", phone: "+91 9876543223", rating: 4.7, tasksCompleted: 44, tasksTotal: 46, status: "active", lastActive: "2 hours ago" },
-    { id: 15, name: "Savita Rani", village: "Chapra", phone: "+91 9876543224", rating: 4.5, tasksCompleted: 42, tasksTotal: 47, status: "active", lastActive: "3 hours ago" },
-    { id: 16, name: "Pushpa Devi", village: "Gopalganj", phone: "+91 9876543225", rating: 4.3, tasksCompleted: 37, tasksTotal: 44, status: "active", lastActive: "5 hours ago" },
-    { id: 17, name: "Kiran Kumari", village: "Muzaffarpur", phone: "+91 9876543226", rating: 4.1, tasksCompleted: 30, tasksTotal: 39, status: "inactive", lastActive: "2 days ago" },
-    { id: 18, name: "Asha Devi", village: "Darbhanga", phone: "+91 9876543227", rating: 4.8, tasksCompleted: 46, tasksTotal: 48, status: "active", lastActive: "1 hour ago" },
-    { id: 19, name: "Renu Singh", village: "Begusarai", phone: "+91 9876543228", rating: 4.6, tasksCompleted: 40, tasksTotal: 45, status: "active", lastActive: "3 hours ago" },
-    { id: 20, name: "Sunita Kumari", village: "Samastipur", phone: "+91 9876543229", rating: 4.4, tasksCompleted: 38, tasksTotal: 43, status: "active", lastActive: "4 hours ago" }
-  ] as const;
+    {
+      id: '1',
+      name: 'Priya Sharma',
+      village: 'Rampur',
+      phone: '+91 9876543210',
+      population: 850,
+      performance: 92,
+      trend: 'up' as const,
+      status: 'active' as const,
+      profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b784?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: '2',
+      name: 'Meera Devi',
+      village: 'Govindpur',
+      phone: '+91 9876543211',
+      population: 720,
+      performance: 78,
+      trend: 'down' as const,
+      status: 'active' as const,
+      profileImage: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936e63?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: '3',
+      name: 'Lakshmi K',
+      village: 'Sundarganj',
+      phone: '+91 9876543212',
+      population: 950,
+      performance: 85,
+      trend: 'up' as const,
+      status: 'active' as const,
+      profileImage: 'https://images.unsplash.com/photo-1580489944761-15a19d674c8e?w=150&h=150&fit=crop&crop=face'
+    },
+    // ... add more sample data
+  ];
 
   const filteredAshas = ashas.filter(asha => {
     const matchesSearch = asha.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          asha.village.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || asha.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesStatus = statusFilter === 'all' || asha.status === statusFilter;
+    const matchesPerformance = performanceFilter === 'all' || 
+                              (performanceFilter === 'high' && asha.performance >= 80) ||
+                              (performanceFilter === 'medium' && asha.performance >= 60 && asha.performance < 80) ||
+                              (performanceFilter === 'low' && asha.performance < 60);
+    
+    return matchesSearch && matchesStatus && matchesPerformance;
   });
 
-  const handleViewDashboard = (ashaId: number) => {
-    window.open('/asha-dashboard', '_blank');
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'up':
+        return <TrendingUp className="h-4 w-4 text-green-600" />;
+      case 'down':
+        return <TrendingDown className="h-4 w-4 text-red-600" />;
+      default:
+        return <div className="h-4 w-4" />;
+    }
   };
 
-  const handlePreview = (asha: any) => {
-    setPreviewAsha(asha);
-    setIsPreviewOpen(true);
+  const getPerformanceBadge = (performance: number) => {
+    if (performance >= 90) return <Badge className="bg-green-100 text-green-800">Excellent</Badge>;
+    if (performance >= 80) return <Badge className="bg-blue-100 text-blue-800">Good</Badge>;
+    if (performance >= 70) return <Badge className="bg-yellow-100 text-yellow-800">Average</Badge>;
+    return <Badge className="bg-red-100 text-red-800">Needs Improvement</Badge>;
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold mb-2">ASHA Workers Management</h2>
-        <p className="text-sm text-gray-600">Manage and monitor your team of {ashas.length} ASHA workers</p>
-      </div>
-
-      <div className="flex space-x-3">
-        <div className="flex-1 relative">
-          <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
-          <Input
-            placeholder="Search by name or village..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-blue-500"
-          />
+      {/* Enhanced Header */}
+      <div className="bg-white rounded-lg p-6 shadow-sm border">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">ASHA Workers Directory</h2>
+            <p className="text-gray-600">Comprehensive list of all ASHA workers in your area</p>
+          </div>
+          <Badge variant="outline" className="text-lg px-3 py-1">
+            {filteredAshas.length} ASHAs
+          </Badge>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-32">
-            <Filter className="h-4 w-4 mr-2" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-            <SelectItem value="warning">Warning</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
 
-      {/* ASHA Cards */}
-      <div className="space-y-4">
-        {filteredAshas.map((asha, index) => (
-          <div key={asha.id}>
-            <AshaCard
-              asha={asha}
-              onViewDashboard={handleViewDashboard}
-              onPreview={handlePreview}
+        {/* Enhanced Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search by name or village..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-11"
             />
           </div>
+          
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="h-11">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={performanceFilter} onValueChange={setPerformanceFilter}>
+            <SelectTrigger className="h-11">
+              <SelectValue placeholder="Filter by performance" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Performance</SelectItem>
+              <SelectItem value="high">High (80%+)</SelectItem>
+              <SelectItem value="medium">Medium (60-79%)</SelectItem>
+              <SelectItem value="low">Low (<60%)</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button variant="outline" className="h-11">
+            <Filter className="h-4 w-4 mr-2" />
+            More Filters
+          </Button>
+        </div>
+      </div>
+
+      {/* Enhanced ASHA List */}
+      <div className="grid gap-4">
+        {filteredAshas.map((asha) => (
+          <Card key={asha.id} className="asha-card hover:shadow-md transition-all duration-200">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-6">
+                {/* Profile Section */}
+                <div className="flex items-center gap-4 flex-1">
+                  <Avatar className="h-16 w-16 border-2 border-gray-100">
+                    <AvatarImage src={asha.profileImage} alt={asha.name} />
+                    <AvatarFallback className="bg-green-100 text-green-700 font-bold text-lg">
+                      {asha.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-semibold text-gray-900">{asha.name}</h3>
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-4 w-4" />
+                        {asha.village}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Phone className="h-4 w-4" />
+                        {asha.phone}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4" />
+                        {asha.population.toLocaleString()} people
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Status and Performance */}
+                <div className="text-center space-y-2">
+                  <Badge variant={asha.status === 'active' ? 'default' : 'secondary'}>
+                    {asha.status}
+                  </Badge>
+                  {getPerformanceBadge(asha.performance)}
+                </div>
+
+                {/* Performance Metrics */}
+                <div className="text-center space-y-2 min-w-[120px]">
+                  <div className="flex items-center justify-center gap-2">
+                    {getTrendIcon(asha.trend)}
+                    <span className="text-2xl font-bold text-gray-900">{asha.performance}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-green-500 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${asha.performance}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500">Performance Score</p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <Eye className="h-4 w-4 mr-1" />
+                    View
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Download className="h-4 w-4 mr-1" />
+                    Export
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
+      {/* Empty State */}
       {filteredAshas.length === 0 && (
-        <Card className="p-8 text-center">
-          <p className="text-gray-500">No ASHA workers found matching your criteria.</p>
+        <Card className="asha-card">
+          <CardContent className="p-12 text-center">
+            <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No ASHAs Found</h3>
+            <p className="text-gray-600 mb-4">
+              {searchTerm || statusFilter !== 'all' || performanceFilter !== 'all' 
+                ? 'Try adjusting your filters to see more results'
+                : 'No ASHA workers have been added yet'
+              }
+            </p>
+            <Button variant="outline" onClick={() => {
+              setSearchTerm('');
+              setStatusFilter('all');
+              setPerformanceFilter('all');
+            }}>
+              Clear Filters
+            </Button>
+          </CardContent>
         </Card>
       )}
-
-      {/* Preview Modal */}
-      <AshaPreviewModal 
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        asha={previewAsha}
-      />
     </div>
   );
 };
+
+export { AshaList };
