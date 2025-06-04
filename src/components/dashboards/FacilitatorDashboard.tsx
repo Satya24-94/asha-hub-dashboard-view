@@ -10,7 +10,7 @@ import {
   TrendingUp,
   Baby,
   LogOut,
-  Calendar
+  Grid3X3
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { MaternalHealthModule } from "@/components/modules/MaternalHealthModule";
@@ -18,10 +18,11 @@ import { ChildHealthModule } from "@/components/modules/ChildHealthModule";
 import { ReferralTrackingModule } from "@/components/modules/ReferralTrackingModule";
 import { AshaFunctionalityModule } from "@/components/modules/AshaFunctionalityModule";
 import { AshaList } from "@/components/AshaList";
+import { AshaManagementDashboard } from "@/components/AshaManagementDashboard";
 import { StatsCard } from "@/components/StatsCard";
 
 export const FacilitatorDashboard = () => {
-  const [activeTab, setActiveTab] = useState("ashas");
+  const [activeTab, setActiveTab] = useState("management");
   const { profile, signOut } = useAuth();
 
   const handleSignOut = async () => {
@@ -57,7 +58,7 @@ export const FacilitatorDashboard = () => {
                 <p className="text-xs text-gray-500">ASHA Facilitator</p>
                 <p className="text-sm font-medium text-gray-900">{profile?.full_name}</p>
               </div>
-              <Button variant="outline" size="sm" onClick={handleSignOut} className="smooth-transition">
+              <Button variant="outline" size="sm" onClick={handleSignOut} className="transition-colors duration-200">
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
@@ -112,13 +113,20 @@ export const FacilitatorDashboard = () => {
         <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="border-b bg-gray-50">
-              <TabsList className="grid w-full grid-cols-5 bg-transparent h-12 p-0">
+              <TabsList className="grid w-full grid-cols-6 bg-transparent h-12 p-0">
+                <TabsTrigger 
+                  value="management" 
+                  className="data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full"
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                  <span className="hidden sm:inline">ASHA Management</span>
+                </TabsTrigger>
                 <TabsTrigger 
                   value="ashas" 
                   className="data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full"
                 >
                   <Users className="h-4 w-4" />
-                  <span className="hidden sm:inline">ASHA Team</span>
+                  <span className="hidden sm:inline">ASHA List</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="maternal" 
@@ -150,6 +158,10 @@ export const FacilitatorDashboard = () => {
                 </TabsTrigger>
               </TabsList>
             </div>
+
+            <TabsContent value="management" className="p-0">
+              <AshaManagementDashboard />
+            </TabsContent>
 
             <TabsContent value="ashas" className="p-6">
               <AshaList />
