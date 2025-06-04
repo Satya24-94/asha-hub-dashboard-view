@@ -1,11 +1,14 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Users, MapPin, Phone, TrendingUp, TrendingDown, Edit, Trash2 } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Plus, Users, MapPin, Phone, TrendingUp, TrendingDown, Edit, Trash2, Download, FileSpreadsheet, User } from 'lucide-react';
 import { AddAshaModal } from '@/components/AddAshaModal';
+import { AshaProfileModal } from '@/components/AshaProfileModal';
+import { CombinedPerformanceModal } from '@/components/CombinedPerformanceModal';
 
 interface AshaData {
   id: string;
@@ -17,6 +20,7 @@ interface AshaData {
   trend: 'up' | 'down' | 'stable';
   status: 'active' | 'inactive';
   color: string;
+  profileImage?: string;
 }
 
 export const AshaManagementDashboard = () => {
@@ -30,7 +34,8 @@ export const AshaManagementDashboard = () => {
       performance: 92,
       trend: 'up',
       status: 'active',
-      color: 'bg-pink-100 border-pink-300'
+      color: 'bg-pink-100 border-pink-300',
+      profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b784?w=150&h=150&fit=crop&crop=face'
     },
     {
       id: '2',
@@ -41,7 +46,8 @@ export const AshaManagementDashboard = () => {
       performance: 78,
       trend: 'down',
       status: 'active',
-      color: 'bg-blue-100 border-blue-300'
+      color: 'bg-blue-100 border-blue-300',
+      profileImage: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936e63?w=150&h=150&fit=crop&crop=face'
     },
     {
       id: '3',
@@ -52,7 +58,8 @@ export const AshaManagementDashboard = () => {
       performance: 85,
       trend: 'up',
       status: 'active',
-      color: 'bg-green-100 border-green-300'
+      color: 'bg-green-100 border-green-300',
+      profileImage: 'https://images.unsplash.com/photo-1580489944761-15a19d674c8e?w=150&h=150&fit=crop&crop=face'
     },
     {
       id: '4',
@@ -63,11 +70,16 @@ export const AshaManagementDashboard = () => {
       performance: 96,
       trend: 'up',
       status: 'active',
-      color: 'bg-purple-100 border-purple-300'
+      color: 'bg-purple-100 border-purple-300',
+      profileImage: 'https://images.unsplash.com/photo-1570295999680-5e19b29a2ca5?w=150&h=150&fit=crop&crop=face'
     }
   ]);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isCombinedPerformanceOpen, setIsCombinedPerformanceOpen] = useState(false);
+  const [selectedAsha, setSelectedAsha] = useState<AshaData | null>(null);
+  const [selectedAshas, setSelectedAshas] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredAshas = ashas.filter(asha => 
@@ -105,6 +117,52 @@ export const AshaManagementDashboard = () => {
 
   const handleRemoveAsha = (id: string) => {
     setAshas(prev => prev.filter(asha => asha.id !== id));
+    setSelectedAshas(prev => prev.filter(ashaId => ashaId !== id));
+  };
+
+  const handleSelectAsha = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedAshas(prev => [...prev, id]);
+    } else {
+      setSelectedAshas(prev => prev.filter(ashaId => ashaId !== id));
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedAshas(filteredAshas.map(asha => asha.id));
+    } else {
+      setSelectedAshas([]);
+    }
+  };
+
+  const handleViewProfile = (asha: AshaData) => {
+    setSelectedAsha(asha);
+    setIsProfileModalOpen(true);
+  };
+
+  const handleViewCombinedPerformance = () => {
+    setIsCombinedPerformanceOpen(true);
+  };
+
+  const handleExportSingle = (asha: AshaData) => {
+    // Simulate Excel export for single ASHA
+    const data = {
+      name: asha.name,
+      village: asha.village,
+      performance: asha.performance,
+      population: asha.population,
+      status: asha.status
+    };
+    console.log('Exporting single ASHA data:', data);
+    alert(`Exporting ${asha.name}'s data to Excel...`);
+  };
+
+  const handleExportAll = () => {
+    // Simulate Excel export for all ASHAs
+    const selectedData = ashas.filter(asha => selectedAshas.includes(asha.id));
+    console.log('Exporting selected ASHAs data:', selectedData);
+    alert(`Exporting ${selectedData.length} ASHA(s) data to Excel...`);
   };
 
   const getTrendIcon = (trend: string) => {
@@ -131,14 +189,35 @@ export const AshaManagementDashboard = () => {
               <h1 className="text-3xl font-bold text-gray-900">ASHA Performance Dashboard</h1>
               <p className="text-gray-600 mt-1">Manage and monitor individual ASHA workers</p>
             </div>
-            <Button 
-              onClick={() => setIsAddModalOpen(true)}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
-              disabled={ashas.length >= 20}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add ASHA {ashas.length >= 20 && '(Max Reached)'}
-            </Button>
+            <div className="flex gap-3">
+              {selectedAshas.length > 0 && (
+                <>
+                  <Button 
+                    onClick={handleViewCombinedPerformance}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    View Combined Performance ({selectedAshas.length})
+                  </Button>
+                  <Button 
+                    onClick={handleExportAll}
+                    variant="outline"
+                    className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+                  >
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Export Selected
+                  </Button>
+                </>
+              )}
+              <Button 
+                onClick={() => setIsAddModalOpen(true)}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                disabled={ashas.length >= 20}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add ASHA {ashas.length >= 20 && '(Max Reached)'}
+              </Button>
+            </div>
           </div>
 
           {/* Summary Stats */}
@@ -194,14 +273,26 @@ export const AshaManagementDashboard = () => {
             </Card>
           </div>
 
-          {/* Search */}
-          <div className="mb-6">
+          {/* Search and Select All */}
+          <div className="mb-6 flex items-center gap-4">
             <Input
               placeholder="Search ASHAs by name or village..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="max-w-md"
             />
+            {filteredAshas.length > 0 && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="select-all"
+                  checked={selectedAshas.length === filteredAshas.length}
+                  onCheckedChange={handleSelectAll}
+                />
+                <label htmlFor="select-all" className="text-sm font-medium">
+                  Select All ({filteredAshas.length})
+                </label>
+              </div>
+            )}
           </div>
         </div>
 
@@ -211,9 +302,15 @@ export const AshaManagementDashboard = () => {
             <Card key={asha.id} className={`relative ${asha.color} hover:shadow-lg transition-all duration-200 border-2`}>
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <Badge variant={asha.status === 'active' ? 'default' : 'secondary'}>
-                    {asha.status}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      checked={selectedAshas.includes(asha.id)}
+                      onCheckedChange={(checked) => handleSelectAsha(asha.id, checked as boolean)}
+                    />
+                    <Badge variant={asha.status === 'active' ? 'default' : 'secondary'}>
+                      {asha.status}
+                    </Badge>
+                  </div>
                   <div className="flex items-center gap-2">
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                       <Edit className="h-4 w-4" />
@@ -228,7 +325,15 @@ export const AshaManagementDashboard = () => {
                     </Button>
                   </div>
                 </div>
-                <CardTitle className="text-lg">{asha.name}</CardTitle>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={asha.profileImage} alt={asha.name} />
+                    <AvatarFallback className="bg-emerald-100 text-emerald-700 font-bold">
+                      {asha.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <CardTitle className="text-lg">{asha.name}</CardTitle>
+                </div>
               </CardHeader>
               
               <CardContent className="space-y-3">
@@ -264,14 +369,26 @@ export const AshaManagementDashboard = () => {
                   </div>
                 </div>
                 
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full mt-3 hover:bg-white/50"
-                  onClick={() => window.open('/asha-dashboard', '_blank')}
-                >
-                  View Dashboard
-                </Button>
+                <div className="flex gap-2 mt-3">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1 hover:bg-white/50"
+                    onClick={() => handleViewProfile(asha)}
+                  >
+                    <User className="h-3 w-3 mr-1" />
+                    Profile
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1 hover:bg-white/50"
+                    onClick={() => handleExportSingle(asha)}
+                  >
+                    <Download className="h-3 w-3 mr-1" />
+                    Export
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -294,6 +411,18 @@ export const AshaManagementDashboard = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAdd={handleAddAsha}
+      />
+
+      <AshaProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        asha={selectedAsha}
+      />
+
+      <CombinedPerformanceModal
+        isOpen={isCombinedPerformanceOpen}
+        onClose={() => setIsCombinedPerformanceOpen(false)}
+        selectedAshas={ashas.filter(asha => selectedAshas.includes(asha.id))}
       />
     </div>
   );

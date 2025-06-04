@@ -19,7 +19,7 @@ import { ReferralTrackingModule } from "@/components/modules/ReferralTrackingMod
 import { AshaFunctionalityModule } from "@/components/modules/AshaFunctionalityModule";
 import { AshaList } from "@/components/AshaList";
 import { AshaManagementDashboard } from "@/components/AshaManagementDashboard";
-import { StatsCard } from "@/components/StatsCard";
+import { EnhancedStatsCard } from "@/components/EnhancedStatsCard";
 
 export const FacilitatorDashboard = () => {
   const [activeTab, setActiveTab] = useState("management");
@@ -83,29 +83,33 @@ export const FacilitatorDashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatsCard
+          <EnhancedStatsCard
             title="Total ASHAs"
             value={facilitatorStats.totalAshas}
             icon={Users}
             gradient="blue-gradient"
+            isWholeNumber={true}
           />
-          <StatsCard
+          <EnhancedStatsCard
             title="Active ASHAs"
             value={facilitatorStats.activeAshas}
             icon={Activity}
             gradient="green-gradient"
+            isWholeNumber={true}
           />
-          <StatsCard
+          <EnhancedStatsCard
             title="Completion Rate"
             value={`${facilitatorStats.completionRate}%`}
             icon={TrendingUp}
             gradient="purple-gradient"
+            isWholeNumber={false}
           />
-          <StatsCard
+          <EnhancedStatsCard
             title="Beneficiaries"
             value={facilitatorStats.totalBeneficiaries.toLocaleString()}
             icon={Heart}
             gradient="pink-gradient"
+            isWholeNumber={true}
           />
         </div>
 
