@@ -57,7 +57,7 @@ export const AshaList = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold mb-2">ASHA Workers Management</h2>
         <p className="text-sm text-gray-600">Manage and monitor your team of {ashas.length} ASHA workers</p>
@@ -90,11 +90,7 @@ export const AshaList = () => {
       {/* ASHA Cards */}
       <div className="space-y-4">
         {filteredAshas.map((asha, index) => (
-          <div 
-            key={asha.id} 
-            className="animate-fade-in" 
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
+          <div key={asha.id}>
             <AshaCard
               asha={asha}
               onViewDashboard={handleViewDashboard}
@@ -105,7 +101,7 @@ export const AshaList = () => {
       </div>
 
       {filteredAshas.length === 0 && (
-        <Card className="p-8 text-center animate-fade-in">
+        <Card className="p-8 text-center">
           <p className="text-gray-500">No ASHA workers found matching your criteria.</p>
         </Card>
       )}

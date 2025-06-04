@@ -1,299 +1,312 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CheckCircle, XCircle, Users } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
-import { AshaFunctionality, Profile } from '@/types/database';
-import { useAuth } from '@/hooks/useAuth';
+import { 
+  CheckCircle, 
+  Clock, 
+  AlertCircle, 
+  Users, 
+  Heart,
+  Baby,
+  Activity,
+  Calendar,
+  Search,
+  Filter,
+  FileText,
+  Download
+} from 'lucide-react';
+
+interface TaskData {
+  id: string;
+  title: string;
+  description: string;
+  category: 'maternal' | 'child' | 'community' | 'nutrition';
+  priority: 'high' | 'medium' | 'low';
+  status: 'completed' | 'pending' | 'overdue';
+  dueDate: string;
+  ashaName: string;
+  village: string;
+  beneficiaries: number;
+}
 
 export const AshaFunctionalityModule = () => {
-  const [data, setData] = useState<(AshaFunctionality & { asha: Profile })[]>([]);
-  const [ashas, setAshas] = useState<Profile[]>([]);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [loading, setLoading] = useState(true);
-  const { profile } = useAuth();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
-  const tasks = [
-    { key: 'newborn_visit_1st_day', label: 'Newborn visit on 1st day (home delivery)' },
-    { key: 'home_visits_newborn_care', label: 'Home visits for newborn care (HBNC)' },
-    { key: 'vhnd_attendance', label: 'VHND attendance & immunization promotion' },
-    { key: 'institutional_delivery_support', label: 'Institutional delivery support' },
-    { key: 'childhood_illness_management', label: 'Management of childhood illness' },
-    { key: 'nutrition_counseling', label: 'Nutrition counseling during household visits' },
-    { key: 'malaria_fever_management', label: 'Malaria slide/fever case management' },
-    { key: 'dots_provision', label: 'DOTS provision' },
-    { key: 'vhsnc_meeting_attendance', label: 'VHSNC meeting attendance' },
-    { key: 'referral_sterilization_services', label: 'Referral for sterilization/OCP/condom provision' },
+  // Sample task data
+  const tasks: TaskData[] = [
+    {
+      id: '1',
+      title: 'Prenatal Care Visit',
+      description: 'Conduct home visit for pregnant women - ANC checkup and health counseling',
+      category: 'maternal',
+      priority: 'high',
+      status: 'completed',
+      dueDate: '2024-06-01',
+      ashaName: 'Priya Sharma',
+      village: 'Rampur',
+      beneficiaries: 15
+    },
+    {
+      id: '2',
+      title: 'Child Immunization Drive',
+      description: 'Organize immunization campaign for children 12-23 months',
+      category: 'child',
+      priority: 'high',
+      status: 'pending',
+      dueDate: '2024-06-05',
+      ashaName: 'Meera Devi',
+      village: 'Govindpur',
+      beneficiaries: 25
+    },
+    {
+      id: '3',
+      title: 'VHND Session',
+      description: 'Village Health and Nutrition Day - health screening and awareness',
+      category: 'community',
+      priority: 'medium',
+      status: 'completed',
+      dueDate: '2024-06-03',
+      ashaName: 'Lakshmi K',
+      village: 'Sundarganj',
+      beneficiaries: 50
+    },
+    {
+      id: '4',
+      title: 'Nutrition Counseling',
+      description: 'Counsel mothers on complementary feeding for 6-9 months children',
+      category: 'nutrition',
+      priority: 'medium',
+      status: 'pending',
+      dueDate: '2024-06-06',
+      ashaName: 'Sunita Yadav',
+      village: 'Krishnanagar',
+      beneficiaries: 12
+    },
+    {
+      id: '5',
+      title: 'Newborn Care Visit',
+      description: 'Home visit for newborn within 24 hours of birth',
+      category: 'child',
+      priority: 'high',
+      status: 'overdue',
+      dueDate: '2024-06-02',
+      ashaName: 'Radha Singh',
+      village: 'Shivpur',
+      beneficiaries: 3
+    },
+    {
+      id: '6',
+      title: 'Family Planning Counseling',
+      description: 'Provide family planning information and contraceptive distribution',
+      category: 'maternal',
+      priority: 'low',
+      status: 'completed',
+      dueDate: '2024-06-04',
+      ashaName: 'Kavita Rani',
+      village: 'Madhubani',
+      beneficiaries: 8
+    }
   ];
 
-  useEffect(() => {
-    if (profile) {
-      fetchData();
-    }
-  }, [profile, selectedMonth, selectedYear]);
+  const filteredTasks = tasks.filter(task => {
+    const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         task.ashaName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         task.village.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
+    const matchesCategory = categoryFilter === 'all' || task.category === categoryFilter;
+    return matchesSearch && matchesStatus && matchesCategory;
+  });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // Fetch ASHAs under this facilitator
-      const { data: ashaData, error: ashaError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('facilitator_id', profile?.id)
-        .eq('role', 'asha');
-
-      if (ashaError) throw ashaError;
-      setAshas(ashaData || []);
-
-      // Fetch functionality data with ASHA profiles
-      const { data: functionalityData, error } = await supabase
-        .from('asha_functionality')
-        .select(`
-          *,
-          asha:profiles(*)
-        `)
-        .eq('month', selectedMonth)
-        .eq('year', selectedYear)
-        .in('asha_id', (ashaData || []).map(a => a.id));
-
-      if (error) throw error;
-      setData(functionalityData || []);
-    } catch (error) {
-      console.error('Error fetching ASHA functionality data:', error);
-    } finally {
-      setLoading(false);
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
+      case 'pending':
+        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>;
+      case 'overdue':
+        return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Overdue</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
-  const calculateTaskStats = () => {
-    return tasks.map(task => {
-      const functionalCount = data.filter(d => d[task.key as keyof AshaFunctionality] === true).length;
-      const totalAshas = ashas.length;
-      const percentage = totalAshas > 0 ? Math.round((functionalCount / totalAshas) * 100) : 0;
-      
-      return {
-        ...task,
-        functionalCount,
-        totalAshas,
-        percentage
-      };
-    });
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return 'text-red-600';
+      case 'medium':
+        return 'text-yellow-600';
+      case 'low':
+        return 'text-green-600';
+      default:
+        return 'text-gray-600';
+    }
   };
 
-  const calculateAshaStats = () => {
-    return ashas.map(asha => {
-      const ashaData = data.find(d => d.asha_id === asha.id);
-      if (!ashaData) {
-        return {
-          asha,
-          functionalTasks: 0,
-          totalTasks: tasks.length,
-          isHighPerformer: false,
-          reported: false
-        };
-      }
-
-      const functionalTasks = tasks.filter(task => 
-        ashaData[task.key as keyof AshaFunctionality] === true
-      ).length;
-
-      return {
-        asha,
-        functionalTasks,
-        totalTasks: tasks.length,
-        isHighPerformer: functionalTasks >= 6,
-        reported: true,
-        data: ashaData
-      };
-    });
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'maternal':
+        return <Heart className="h-4 w-4 text-pink-600" />;
+      case 'child':
+        return <Baby className="h-4 w-4 text-blue-600" />;
+      case 'community':
+        return <Users className="h-4 w-4 text-purple-600" />;
+      case 'nutrition':
+        return <Activity className="h-4 w-4 text-green-600" />;
+      default:
+        return <FileText className="h-4 w-4 text-gray-600" />;
+    }
   };
 
-  const taskStats = calculateTaskStats();
-  const ashaStats = calculateAshaStats();
-  const highPerformers = ashaStats.filter(stat => stat.isHighPerformer).length;
-  const notReported = ashaStats.filter(stat => !stat.reported).length;
-
-  const getPerformanceColor = (percentage: number) => {
-    if (percentage >= 75) return 'bg-green-100 text-green-800';
-    if (percentage >= 50) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-red-100 text-red-800';
+  const taskStats = {
+    total: tasks.length,
+    completed: tasks.filter(t => t.status === 'completed').length,
+    pending: tasks.filter(t => t.status === 'pending').length,
+    overdue: tasks.filter(t => t.status === 'overdue').length,
+    beneficiaries: tasks.reduce((sum, task) => sum + task.beneficiaries, 0)
   };
-
-  const months = [
-    { value: 1, label: 'January' }, { value: 2, label: 'February' }, { value: 3, label: 'March' },
-    { value: 4, label: 'April' }, { value: 5, label: 'May' }, { value: 6, label: 'June' },
-    { value: 7, label: 'July' }, { value: 8, label: 'August' }, { value: 9, label: 'September' },
-    { value: 10, label: 'October' }, { value: 11, label: 'November' }, { value: 12, label: 'December' }
-  ];
-
-  if (loading) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <div className="space-y-6">
-      {/* Summary Stats */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-purple-600" />
-            ASHA Functionality Tracking
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4 mb-6">
-            <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {months.map((month) => (
-                  <SelectItem key={month.value} value={month.value.toString()}>
-                    {month.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedYear.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2023">2023</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      <div>
+        <h2 className="text-lg font-semibold mb-2">ASHA Functionality & Tasks</h2>
+        <p className="text-sm text-gray-600">Track and manage ASHA activities and task completion</p>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="p-4 bg-blue-50 rounded-lg text-center">
-              <p className="text-sm text-blue-600">Total ASHAs</p>
-              <p className="text-2xl font-bold text-blue-800">{ashas.length}</p>
-            </div>
-            <div className="p-4 bg-green-50 rounded-lg text-center">
-              <p className="text-sm text-green-600">High Performers (≥6 tasks)</p>
-              <p className="text-2xl font-bold text-green-800">{highPerformers}</p>
-            </div>
-            <div className="p-4 bg-orange-50 rounded-lg text-center">
-              <p className="text-sm text-orange-600">Did Not Report</p>
-              <p className="text-2xl font-bold text-orange-800">{notReported}</p>
-            </div>
-            <div className="p-4 bg-purple-50 rounded-lg text-center">
-              <p className="text-sm text-purple-600">Performance Rate</p>
-              <p className="text-2xl font-bold text-purple-800">
-                {ashas.length > 0 ? Math.round((highPerformers / ashas.length) * 100) : 0}%
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Stats Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <Card>
+          <CardContent className="p-4 text-center">
+            <FileText className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+            <p className="text-xl font-bold text-blue-700">{taskStats.total}</p>
+            <p className="text-xs text-blue-600">Total Tasks</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
+            <p className="text-xl font-bold text-green-700">{taskStats.completed}</p>
+            <p className="text-xs text-green-600">Completed</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <Clock className="h-6 w-6 text-yellow-600 mx-auto mb-2" />
+            <p className="text-xl font-bold text-yellow-700">{taskStats.pending}</p>
+            <p className="text-xs text-yellow-600">Pending</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <AlertCircle className="h-6 w-6 text-red-600 mx-auto mb-2" />
+            <p className="text-xl font-bold text-red-700">{taskStats.overdue}</p>
+            <p className="text-xs text-red-600">Overdue</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <Users className="h-6 w-6 text-purple-600 mx-auto mb-2" />
+            <p className="text-xl font-bold text-purple-700">{taskStats.beneficiaries}</p>
+            <p className="text-xs text-purple-600">Beneficiaries</p>
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Task Performance Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Task-wise Performance</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {taskStats.map((task, index) => (
-              <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex-1">
-                  <h4 className="font-medium text-sm">{task.label}</h4>
-                  <p className="text-xs text-gray-500">
-                    {task.functionalCount}/{task.totalAshas} ASHAs functional
-                  </p>
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3">
+        <div className="flex-1 min-w-64 relative">
+          <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
+          <Input
+            placeholder="Search tasks or ASHA name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-32">
+            <Filter className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="overdue">Overdue</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="maternal">Maternal</SelectItem>
+            <SelectItem value="child">Child Health</SelectItem>
+            <SelectItem value="community">Community</SelectItem>
+            <SelectItem value="nutrition">Nutrition</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button variant="outline">
+          <Download className="h-4 w-4 mr-2" />
+          Export
+        </Button>
+      </div>
+
+      {/* Tasks List */}
+      <div className="space-y-4">
+        {filteredTasks.map((task) => (
+          <Card key={task.id} className="hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start gap-3">
+                  {getCategoryIcon(task.category)}
+                  <div>
+                    <h3 className="font-semibold text-lg">{task.title}</h3>
+                    <p className="text-gray-600 text-sm mt-1">{task.description}</p>
+                  </div>
                 </div>
-                <Badge className={getPerformanceColor(task.percentage)}>
-                  {task.percentage}%
-                </Badge>
+                <div className="flex flex-col items-end gap-2">
+                  {getStatusBadge(task.status)}
+                  <span className={`text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                    {task.priority.toUpperCase()} PRIORITY
+                  </span>
+                </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              
+              <div className="flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center gap-1">
+                    <Users className="h-4 w-4" />
+                    {task.ashaName}
+                  </span>
+                  <span>{task.village}</span>
+                  <span className="flex items-center gap-1">
+                    <Heart className="h-4 w-4" />
+                    {task.beneficiaries} beneficiaries
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  Due: {new Date(task.dueDate).toLocaleDateString()}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-      {/* Individual ASHA Performance Matrix */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Individual ASHA Performance Matrix</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2 sticky left-0 bg-white">ASHA Name</th>
-                  {tasks.map((task, index) => (
-                    <th key={index} className="text-center p-2 min-w-[40px]" title={task.label}>
-                      T{index + 1}
-                    </th>
-                  ))}
-                  <th className="text-center p-2">Total</th>
-                  <th className="text-center p-2">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ashaStats.map((stat, index) => (
-                  <tr key={index} className="border-b">
-                    <td className="p-2 font-medium sticky left-0 bg-white">
-                      {stat.asha.full_name}
-                    </td>
-                    {tasks.map((task, taskIndex) => {
-                      const isCompleted = stat.data?.[task.key as keyof AshaFunctionality] === true;
-                      return (
-                        <td key={taskIndex} className="text-center p-2">
-                          {stat.reported ? (
-                            isCompleted ? (
-                              <CheckCircle className="h-4 w-4 text-green-600 mx-auto" />
-                            ) : (
-                              <XCircle className="h-4 w-4 text-red-600 mx-auto" />
-                            )
-                          ) : (
-                            <div className="w-4 h-4 bg-gray-300 rounded mx-auto"></div>
-                          )}
-                        </td>
-                      );
-                    })}
-                    <td className="text-center p-2 font-medium">
-                      {stat.functionalTasks}/{stat.totalTasks}
-                    </td>
-                    <td className="text-center p-2">
-                      {!stat.reported ? (
-                        <Badge className="bg-gray-100 text-gray-800">Not Reported</Badge>
-                      ) : stat.isHighPerformer ? (
-                        <Badge className="bg-green-100 text-green-800">High Performer</Badge>
-                      ) : (
-                        <Badge className="bg-yellow-100 text-yellow-800">Needs Improvement</Badge>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-4 text-sm text-gray-600">
-            <p><strong>Task Legend:</strong></p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-              {tasks.map((task, index) => (
-                <p key={index}>T{index + 1}: {task.label}</p>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {filteredTasks.length === 0 && (
+        <Card className="p-8 text-center">
+          <p className="text-gray-500">No tasks found matching your criteria.</p>
+        </Card>
+      )}
     </div>
   );
 };

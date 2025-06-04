@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Users, MapPin, Phone, TrendingUp, TrendingDown, Edit, Trash2, Download, FileSpreadsheet, User } from 'lucide-react';
+import { Plus, Users, MapPin, Phone, TrendingUp, TrendingDown, Edit, Trash2, Download, FileSpreadsheet, User, Crown, AlertTriangle, Target } from 'lucide-react';
 import { AddAshaModal } from '@/components/AddAshaModal';
 import { AshaProfileModal } from '@/components/AshaProfileModal';
 import { CombinedPerformanceModal } from '@/components/CombinedPerformanceModal';
@@ -72,6 +72,30 @@ export const AshaManagementDashboard = () => {
       status: 'active',
       color: 'bg-purple-100 border-purple-300',
       profileImage: 'https://images.unsplash.com/photo-1570295999680-5e19b29a2ca5?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: '5',
+      name: 'Radha Singh',
+      village: 'Shivpur',
+      phone: '+91 9876543214',
+      population: 800,
+      performance: 88,
+      trend: 'up',
+      status: 'active',
+      color: 'bg-yellow-100 border-yellow-300',
+      profileImage: 'https://images.unsplash.com/photo-1580489944761-15a19d674c8e?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: '6',
+      name: 'Kavita Rani',
+      village: 'Madhubani',
+      phone: '+91 9876543215',
+      population: 750,
+      performance: 65,
+      trend: 'down',
+      status: 'active',
+      color: 'bg-indigo-100 border-indigo-300',
+      profileImage: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936e63?w=150&h=150&fit=crop&crop=face'
     }
   ]);
 
@@ -82,10 +106,22 @@ export const AshaManagementDashboard = () => {
   const [selectedAshas, setSelectedAshas] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Targets for denominator display
+  const targets = {
+    totalAshas: 20,
+    totalPopulation: 20000,
+    averagePerformance: 85,
+    activeAshas: 20
+  };
+
   const filteredAshas = ashas.filter(asha => 
     asha.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     asha.village.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Get top and bottom performers
+  const topPerformers = [...ashas].sort((a, b) => b.performance - a.performance).slice(0, 5);
+  const bottomPerformers = [...ashas].sort((a, b) => a.performance - b.performance).slice(0, 5);
 
   const handleAddAsha = (newAsha: Omit<AshaData, 'id'>) => {
     if (ashas.length >= 20) {
@@ -146,7 +182,6 @@ export const AshaManagementDashboard = () => {
   };
 
   const handleExportSingle = (asha: AshaData) => {
-    // Simulate Excel export for single ASHA
     const data = {
       name: asha.name,
       village: asha.village,
@@ -159,10 +194,17 @@ export const AshaManagementDashboard = () => {
   };
 
   const handleExportAll = () => {
-    // Simulate Excel export for all ASHAs
     const selectedData = ashas.filter(asha => selectedAshas.includes(asha.id));
     console.log('Exporting selected ASHAs data:', selectedData);
     alert(`Exporting ${selectedData.length} ASHA(s) data to Excel...`);
+  };
+
+  const handleSelectTopPerformers = () => {
+    setSelectedAshas(topPerformers.map(asha => asha.id));
+  };
+
+  const handleSelectBottomPerformers = () => {
+    setSelectedAshas(bottomPerformers.map(asha => asha.id));
   };
 
   const getTrendIcon = (trend: string) => {
@@ -211,23 +253,28 @@ export const AshaManagementDashboard = () => {
               )}
               <Button 
                 onClick={() => setIsAddModalOpen(true)}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full h-12 w-12 p-0"
                 disabled={ashas.length >= 20}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Add ASHA {ashas.length >= 20 && '(Max Reached)'}
+                <Plus className="h-6 w-6" />
               </Button>
             </div>
           </div>
 
-          {/* Summary Stats */}
+          {/* Summary Stats with Targets */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Total ASHAs</p>
-                    <p className="text-2xl font-bold text-gray-900">{ashas.length}/20</p>
+                    <p className="text-2xl font-bold text-gray-900">{ashas.length}/{targets.totalAshas}</p>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-blue-500 h-2 rounded-full"
+                        style={{ width: `${(ashas.length / targets.totalAshas) * 100}%` }}
+                      ></div>
+                    </div>
                   </div>
                   <Users className="h-8 w-8 text-blue-600" />
                 </div>
@@ -239,7 +286,13 @@ export const AshaManagementDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Total Population</p>
-                    <p className="text-2xl font-bold text-gray-900">{totalPopulation.toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-gray-900">{totalPopulation.toLocaleString()}/{targets.totalPopulation.toLocaleString()}</p>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-green-500 h-2 rounded-full"
+                        style={{ width: `${Math.min((totalPopulation / targets.totalPopulation) * 100, 100)}%` }}
+                      ></div>
+                    </div>
                   </div>
                   <MapPin className="h-8 w-8 text-green-600" />
                 </div>
@@ -251,9 +304,15 @@ export const AshaManagementDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Avg Performance</p>
-                    <p className="text-2xl font-bold text-gray-900">{averagePerformance}%</p>
+                    <p className="text-2xl font-bold text-gray-900">{averagePerformance}%/{targets.averagePerformance}%</p>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-purple-500 h-2 rounded-full"
+                        style={{ width: `${(averagePerformance / targets.averagePerformance) * 100}%` }}
+                      ></div>
+                    </div>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-purple-600" />
+                  <Target className="h-8 w-8 text-purple-600" />
                 </div>
               </CardContent>
             </Card>
@@ -263,7 +322,13 @@ export const AshaManagementDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Active ASHAs</p>
-                    <p className="text-2xl font-bold text-gray-900">{ashas.filter(a => a.status === 'active').length}</p>
+                    <p className="text-2xl font-bold text-gray-900">{ashas.filter(a => a.status === 'active').length}/{targets.activeAshas}</p>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-emerald-500 h-2 rounded-full"
+                        style={{ width: `${(ashas.filter(a => a.status === 'active').length / targets.activeAshas) * 100}%` }}
+                      ></div>
+                    </div>
                   </div>
                   <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
                     <div className="h-3 w-3 bg-green-500 rounded-full"></div>
@@ -271,6 +336,24 @@ export const AshaManagementDashboard = () => {
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Performance Action Buttons */}
+          <div className="flex gap-3 mb-6">
+            <Button 
+              onClick={handleSelectTopPerformers}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              <Crown className="h-4 w-4 mr-2" />
+              Top 5 Performers
+            </Button>
+            <Button 
+              onClick={handleSelectBottomPerformers}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Bottom 5 Performers
+            </Button>
           </div>
 
           {/* Search and Select All */}
@@ -349,7 +432,7 @@ export const AshaManagementDashboard = () => {
                 
                 <div className="flex items-center text-sm text-gray-600">
                   <Users className="h-4 w-4 mr-1" />
-                  Population: {asha.population.toLocaleString()}
+                  Population: {asha.population.toLocaleString()}/1000
                 </div>
                 
                 <div className="pt-2 border-t">
@@ -399,7 +482,10 @@ export const AshaManagementDashboard = () => {
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No ASHAs Added</h3>
             <p className="text-gray-600 mb-4">Start by adding your first ASHA worker</p>
-            <Button onClick={() => setIsAddModalOpen(true)}>
+            <Button 
+              onClick={() => setIsAddModalOpen(true)}
+              className="rounded-full"
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add First ASHA
             </Button>
