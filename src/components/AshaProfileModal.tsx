@@ -31,13 +31,16 @@ interface AshaProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
   asha: AshaData | null;
+  onExport?: () => void;
 }
 
-export const AshaProfileModal = ({ isOpen, onClose, asha }: AshaProfileModalProps) => {
+export const AshaProfileModal = ({ isOpen, onClose, asha, onExport }: AshaProfileModalProps) => {
   if (!asha) return null;
 
   const handleExportProfile = () => {
-    alert(`Exporting ${asha.name}'s complete profile...`);
+    if (onExport) {
+      onExport();
+    }
   };
 
   return (

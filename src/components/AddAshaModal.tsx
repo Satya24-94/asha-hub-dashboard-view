@@ -2,213 +2,109 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
+import { Users, MapPin, Phone } from 'lucide-react';
+
+interface AvailableAsha {
+  id: string;
+  name: string;
+  village: string;
+  phone: string;
+}
 
 interface AddAshaModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (asha: {
-    name: string;
-    village: string;
-    phone: string;
-    population: number;
-    performance: number;
-    trend: 'up' | 'down' | 'stable';
-    status: 'active' | 'inactive';
-  }) => void;
+  onAdd: (ashaId: string) => void;
+  availableAshas: AvailableAsha[];
 }
 
-export const AddAshaModal = ({ isOpen, onClose, onAdd }: AddAshaModalProps) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    village: '',
-    phone: '',
-    population: '',
-    performance: '',
-    trend: 'stable' as 'up' | 'down' | 'stable',
-    status: 'active' as 'active' | 'inactive'
-  });
+export const AddAshaModal = ({ isOpen, onClose, onAdd, availableAshas }: AddAshaModalProps) => {
+  const [selectedAshaId, setSelectedAshaId] = useState('');
+  const selectedAsha = availableAshas.find(asha => asha.id === selectedAshaId);
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-
-    if (!formData.village.trim()) {
-      newErrors.village = 'Village is required';
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone is required';
-    } else if (!/^\+91\s?\d{10}$/.test(formData.phone)) {
-      newErrors.phone = 'Invalid phone format (use +91 followed by 10 digits)';
-    }
-
-    const population = parseInt(formData.population);
-    if (!formData.population || isNaN(population)) {
-      newErrors.population = 'Population is required';
-    } else if (population <= 0) {
-      newErrors.population = 'Population must be greater than 0';
-    } else if (population > 1000) {
-      newErrors.population = 'Population cannot exceed 1000';
-    }
-
-    const performance = parseInt(formData.performance);
-    if (!formData.performance || isNaN(performance)) {
-      newErrors.performance = 'Performance is required';
-    } else if (performance < 0 || performance > 100) {
-      newErrors.performance = 'Performance must be between 0 and 100';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = () => {
-    if (validateForm()) {
-      onAdd({
-        name: formData.name.trim(),
-        village: formData.village.trim(),
-        phone: formData.phone.trim(),
-        population: parseInt(formData.population),
-        performance: parseInt(formData.performance),
-        trend: formData.trend,
-        status: formData.status
-      });
-      
-      // Reset form
-      setFormData({
-        name: '',
-        village: '',
-        phone: '',
-        population: '',
-        performance: '',
-        trend: 'stable',
-        status: 'active'
-      });
-      setErrors({});
+  const handleAdd = () => {
+    if (selectedAshaId) {
+      onAdd(selectedAshaId);
+      setSelectedAshaId('');
     }
   };
 
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
+  const handleClose = () => {
+    setSelectedAshaId('');
+    onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New ASHA</DialogTitle>
+          <DialogTitle className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-100 rounded-lg">
+              <Users className="h-5 w-5 text-emerald-600" />
+            </div>
+            Add ASHA Worker
+          </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <Label htmlFor="name">Full Name *</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => handleChange('name', e.target.value)}
-              placeholder="Enter full name"
-              className={errors.name ? 'border-red-500' : ''}
-            />
-            {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="village">Village *</Label>
-            <Input
-              id="village"
-              value={formData.village}
-              onChange={(e) => handleChange('village', e.target.value)}
-              placeholder="Enter village name"
-              className={errors.village ? 'border-red-500' : ''}
-            />
-            {errors.village && <p className="text-sm text-red-500 mt-1">{errors.village}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="phone">Phone Number *</Label>
-            <Input
-              id="phone"
-              value={formData.phone}
-              onChange={(e) => handleChange('phone', e.target.value)}
-              placeholder="+91 9876543210"
-              className={errors.phone ? 'border-red-500' : ''}
-            />
-            {errors.phone && <p className="text-sm text-red-500 mt-1">{errors.phone}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="population">Population Served * (Max: 1000)</Label>
-            <Input
-              id="population"
-              type="number"
-              value={formData.population}
-              onChange={(e) => handleChange('population', e.target.value)}
-              placeholder="Enter population"
-              max="1000"
-              className={errors.population ? 'border-red-500' : ''}
-            />
-            {errors.population && <p className="text-sm text-red-500 mt-1">{errors.population}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="performance">Initial Performance % *</Label>
-            <Input
-              id="performance"
-              type="number"
-              value={formData.performance}
-              onChange={(e) => handleChange('performance', e.target.value)}
-              placeholder="Enter performance (0-100)"
-              min="0"
-              max="100"
-              className={errors.performance ? 'border-red-500' : ''}
-            />
-            {errors.performance && <p className="text-sm text-red-500 mt-1">{errors.performance}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="trend">Performance Trend</Label>
-            <Select value={formData.trend} onValueChange={(value: 'up' | 'down' | 'stable') => handleChange('trend', value)}>
-              <SelectTrigger>
-                <SelectValue />
+            <label className="text-sm font-medium text-gray-700 block mb-2">
+              Select ASHA from your team
+            </label>
+            <Select value={selectedAshaId} onValueChange={setSelectedAshaId}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choose an ASHA worker..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="up">Improving</SelectItem>
-                <SelectItem value="stable">Stable</SelectItem>
-                <SelectItem value="down">Declining</SelectItem>
+                {availableAshas.map((asha) => (
+                  <SelectItem key={asha.id} value={asha.id}>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{asha.name}</span>
+                      <span className="text-sm text-gray-500">• {asha.village}</span>
+                    </div>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
+            {availableAshas.length === 0 && (
+              <p className="text-sm text-gray-500 mt-2">All available ASHAs have been added to your dashboard.</p>
+            )}
           </div>
 
-          <div>
-            <Label htmlFor="status">Status</Label>
-            <Select value={formData.status} onValueChange={(value: 'active' | 'inactive') => handleChange('status', value)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {selectedAsha && (
+            <Card className="bg-gray-50 border-gray-200">
+              <CardContent className="p-4">
+                <h4 className="font-semibold text-gray-900 mb-3">ASHA Details</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-gray-500" />
+                    <span className="font-medium">{selectedAsha.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-gray-500" />
+                    <span>{selectedAsha.village}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-gray-500" />
+                    <span>{selectedAsha.phone}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         <div className="flex gap-3 mt-6">
-          <Button variant="outline" onClick={onClose} className="flex-1">
+          <Button variant="outline" onClick={handleClose} className="flex-1">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} className="flex-1">
+          <Button 
+            onClick={handleAdd} 
+            className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+            disabled={!selectedAshaId}
+          >
             Add ASHA
           </Button>
         </div>
