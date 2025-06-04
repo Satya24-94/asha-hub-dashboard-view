@@ -36,7 +36,6 @@ export const CombinedPerformanceModal = ({ isOpen, onClose, selectedAshas }: Com
   const averagePerformance = selectedAshas.length > 0 
     ? selectedAshas.reduce((sum, asha) => sum + asha.performance, 0) / selectedAshas.length
     : 0;
-  const activeAshas = selectedAshas.filter(asha => asha.status === 'active').length;
 
   const handleExportCombined = () => {
     alert(`Exporting combined performance data for ${selectedAshas.length} ASHAs...`);
@@ -154,7 +153,7 @@ export const CombinedPerformanceModal = ({ isOpen, onClose, selectedAshas }: Com
                   <p className="text-xl font-bold text-red-700">
                     {selectedAshas.filter(a => a.performance < 70).length}
                   </p>
-                  <p className="text-xs text-red-600">Needs Improvement (<70%)</p>
+                  <p className="text-xs text-red-600">Needs Improvement (&lt;70%)</p>
                 </div>
               </div>
             </CardContent>
