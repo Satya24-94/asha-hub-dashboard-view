@@ -1,15 +1,8 @@
 
-import React from "react";
-import { FacilitatorDashboard } from "@/components/dashboards/FacilitatorDashboard";
-import { Navigation } from "@/components/Navigation";
+import { AshaManagementDashboard } from "@/components/AshaManagementDashboard";
 
 const Index = () => {
-  return (
-    <div className="relative">
-      <Navigation />
-      <FacilitatorDashboard />
-    </div>
-  );
+  return <AshaManagementDashboard />;
 };
 
 export default Index;
