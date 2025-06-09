@@ -26,19 +26,41 @@ export const EnhancedStatsCard = React.memo(({
     ? (isWholeNumber ? value.toString() : value.toFixed(1))
     : value;
 
+  // Define proper gradient classes with better visibility
+  const getGradientClass = (gradientName: string) => {
+    switch (gradientName) {
+      case 'blue-gradient':
+        return 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-100';
+      case 'green-gradient':
+        return 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-emerald-100';
+      case 'purple-gradient':
+        return 'bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-purple-100';
+      case 'pink-gradient':
+        return 'bg-gradient-to-br from-pink-500 to-pink-600 text-white shadow-pink-100';
+      case 'orange-gradient':
+        return 'bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-orange-100';
+      case 'teal-gradient':
+        return 'bg-gradient-to-br from-teal-500 to-teal-600 text-white shadow-teal-100';
+      default:
+        return 'bg-gradient-to-br from-slate-500 to-slate-600 text-white shadow-slate-100';
+    }
+  };
+
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Card className={`${gradient} border-0 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer`}>
+          <Card className={`${getGradientClass(gradient)} border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105`}>
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
-                  <Icon className={`h-6 w-6 ${iconColor}`} />
+                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm border border-white/30">
+                  <Icon className="h-6 w-6 text-white drop-shadow-sm" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-white/90 font-medium mb-1">{title}</p>
-                  <p className="text-2xl font-bold text-white">
+                  <p className="text-sm text-white/95 font-medium mb-2 tracking-wide">
+                    {title}
+                  </p>
+                  <p className="text-3xl font-bold text-white drop-shadow-sm leading-none">
                     {formattedValue}
                   </p>
                 </div>
@@ -46,8 +68,8 @@ export const EnhancedStatsCard = React.memo(({
             </CardContent>
           </Card>
         </TooltipTrigger>
-        <TooltipContent>
-          <p>{title}: {formattedValue}</p>
+        <TooltipContent className="bg-white border border-gray-200 shadow-lg">
+          <p className="text-gray-800 font-medium">{title}: {formattedValue}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
