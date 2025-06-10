@@ -12,7 +12,7 @@ export const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState<'asha' | 'asha_facilitator'>('asha');
+  const [role, setRole] = useState<'asha' | 'asha_facilitator'>('asha_facilitator');
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,7 +86,7 @@ export const LoginForm = () => {
           <div className="mx-auto mb-4 p-3 bg-emerald-100 rounded-full w-fit">
             <Shield className="h-8 w-8 text-emerald-600" />
           </div>
-          <CardTitle className="text-2xl font-bold text-emerald-800">ASHA Dashboard</CardTitle>
+          <CardTitle className="text-2xl font-bold text-emerald-800">ASHA Facilitator Dashboard</CardTitle>
           <p className="text-emerald-600">Community Health Management System</p>
         </CardHeader>
         <CardContent>
@@ -204,6 +204,11 @@ export const LoginForm = () => {
 
           <div className="mt-4 text-xs text-center text-gray-500">
             <p>Secure authentication powered by Supabase</p>
+            <div className="mt-2 p-2 bg-blue-50 rounded-md">
+              <p className="font-medium text-blue-700">Test Credentials:</p>
+              <p className="text-blue-600">Email: admin@asha.gov.in</p>
+              <p className="text-blue-600">Password: admin123</p>
+            </div>
           </div>
         </CardContent>
       </Card>
