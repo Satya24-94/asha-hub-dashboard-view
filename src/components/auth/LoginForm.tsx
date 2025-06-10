@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
-import { Shield } from 'lucide-react';
+import { Shield, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -14,39 +15,68 @@ export const LoginForm = () => {
   const [role, setRole] = useState<'asha' | 'asha_facilitator'>('asha');
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const { signIn, signUp } = useAuth();
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 6;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    
+    // Input validation
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    
+    if (!validatePassword(password)) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+    
+    if (isSignUp && !fullName.trim()) {
+      setError('Full name is required');
+      return;
+    }
+    
     setLoading(true);
     
-    if (isSignUp) {
-      const { error } = await signUp(email, password, { full_name: fullName, role });
-      if (error) {
-        console.error('Sign up error:', error);
-        alert('Sign up failed: ' + error.message);
+    try {
+      if (isSignUp) {
+        const { error } = await signUp(email.trim(), password, { 
+          full_name: fullName.trim(), 
+          role 
+        });
+        if (error) {
+          setError(error.message || 'Sign up failed');
+        } else {
+          setSuccess('Sign up successful! Please check your email for verification.');
+          setIsSignUp(false);
+          setEmail('');
+          setPassword('');
+          setFullName('');
+        }
       } else {
-        alert('Sign up successful! Please check your email for verification.');
+        const { error } = await signIn(email.trim(), password);
+        if (error) {
+          setError(error.message || 'Login failed');
+        }
       }
-    } else {
-      const { error } = await signIn(email, password);
-      if (error) {
-        console.error('Login error:', error);
-        alert('Login failed: ' + error.message);
-      }
+    } catch (error) {
+      setError('An unexpected error occurred. Please try again.');
     }
     
     setLoading(false);
-  };
-
-  const fillDemoCredentials = (userType: 'facilitator' | 'asha') => {
-    if (userType === 'facilitator') {
-      setEmail('facilitator@demo.com');
-      setPassword('password123');
-    } else {
-      setEmail('asha@demo.com');
-      setPassword('password123');
-    }
   };
 
   return (
@@ -64,7 +94,11 @@ export const LoginForm = () => {
             <Button
               type="button"
               variant={!isSignUp ? "default" : "outline"}
-              onClick={() => setIsSignUp(false)}
+              onClick={() => {
+                setIsSignUp(false);
+                setError(null);
+                setSuccess(null);
+              }}
               className="flex-1"
             >
               Sign In
@@ -72,12 +106,30 @@ export const LoginForm = () => {
             <Button
               type="button"
               variant={isSignUp ? "default" : "outline"}
-              onClick={() => setIsSignUp(true)}
+              onClick={() => {
+                setIsSignUp(true);
+                setError(null);
+                setSuccess(null);
+              }}
               className="flex-1"
             >
               Sign Up
             </Button>
           </div>
+
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {success && (
+            <Alert className="mb-4 border-green-200 bg-green-50">
+              <AlertCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800">{success}</AlertDescription>
+            </Alert>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignUp && (
@@ -90,6 +142,7 @@ export const LoginForm = () => {
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Enter your full name"
                   required
+                  maxLength={100}
                 />
               </div>
             )}
@@ -103,6 +156,7 @@ export const LoginForm = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
+                maxLength={255}
               />
             </div>
 
@@ -115,6 +169,8 @@ export const LoginForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
+                minLength={6}
+                maxLength={128}
               />
             </div>
 
@@ -126,6 +182,7 @@ export const LoginForm = () => {
                   value={role}
                   onChange={(e) => setRole(e.target.value as 'asha' | 'asha_facilitator')}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  required
                 >
                   <option value="asha">ASHA Worker</option>
                   <option value="asha_facilitator">ASHA Facilitator</option>
@@ -134,40 +191,19 @@ export const LoginForm = () => {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (isSignUp ? 'Creating account...' : 'Signing in...') : (isSignUp ? 'Create Account' : 'Sign In')}
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  {isSignUp ? 'Creating account...' : 'Signing in...'}
+                </div>
+              ) : (
+                isSignUp ? 'Create Account' : 'Sign In'
+              )}
             </Button>
           </form>
 
-          {!isSignUp && (
-            <div className="mt-4 space-y-2">
-              <div className="text-sm text-center text-gray-600">
-                <p>Quick fill demo accounts:</p>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fillDemoCredentials('facilitator')}
-                  className="flex-1"
-                >
-                  Facilitator Demo
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fillDemoCredentials('asha')}
-                  className="flex-1"
-                >
-                  ASHA Demo
-                </Button>
-              </div>
-            </div>
-          )}
-
           <div className="mt-4 text-xs text-center text-gray-500">
-            <p>Create demo accounts using the sign up form above</p>
+            <p>Secure authentication powered by Supabase</p>
           </div>
         </CardContent>
       </Card>

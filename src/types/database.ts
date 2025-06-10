@@ -3,14 +3,14 @@ export type UserRole = 'asha' | 'asha_facilitator' | 'admin';
 
 export interface Profile {
   id: string;
-  full_name: string;
-  role: UserRole;
-  phone?: string;
-  village?: string;
-  block?: string;
-  district?: string;
-  state?: string;
-  facilitator_id?: string;
+  full_name: string | null;
+  role: string | null;
+  phone: string | null;
+  village: string | null;
+  block: string | null;
+  district: string | null;
+  state: string | null;
+  facilitator_id: string | null;
   created_at: string;
   updated_at: string;
 }
