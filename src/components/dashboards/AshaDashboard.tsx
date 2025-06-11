@@ -10,8 +10,6 @@ import {
   Baby,
   LogOut,
   User,
-  TrendingUp,
-  UserCheck,
   Plus
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -34,8 +32,8 @@ export const AshaDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
-      {/* Clean Header */}
-      <div className="bg-white shadow-sm border-b border-pink-100 sticky top-0 z-50">
+      {/* Header with top padding to prevent navigation overlap */}
+      <div className="bg-white shadow-sm border-b border-pink-100 sticky top-0 z-40 mt-20">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -137,12 +135,15 @@ export const AshaDashboard = () => {
         </Card>
       </div>
 
+      {/* Bottom spacing for fixed navigation */}
+      <div className="h-24 pb-safe"></div>
+
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
         <div className="max-w-4xl mx-auto grid grid-cols-4 py-2">
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center py-3 h-auto text-gray-700 hover:bg-gray-50"
+            className={`flex flex-col items-center py-3 h-auto hover:bg-gray-50 ${activeTab === 'entry' ? 'text-pink-600' : 'text-gray-700'}`}
             onClick={() => setActiveTab("entry")}
           >
             <Plus className="h-5 w-5 mb-1" />
@@ -150,7 +151,7 @@ export const AshaDashboard = () => {
           </Button>
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center py-3 h-auto text-gray-700 hover:bg-gray-50"
+            className={`flex flex-col items-center py-3 h-auto hover:bg-gray-50 ${activeTab === 'maternal' ? 'text-pink-600' : 'text-gray-700'}`}
             onClick={() => setActiveTab("maternal")}
           >
             <Baby className="h-5 w-5 mb-1" />
@@ -158,7 +159,7 @@ export const AshaDashboard = () => {
           </Button>
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center py-3 h-auto text-gray-700 hover:bg-gray-50"
+            className={`flex flex-col items-center py-3 h-auto hover:bg-gray-50 ${activeTab === 'child' ? 'text-pink-600' : 'text-gray-700'}`}
             onClick={() => setActiveTab("child")}
           >
             <Heart className="h-5 w-5 mb-1" />
@@ -166,7 +167,7 @@ export const AshaDashboard = () => {
           </Button>
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center py-3 h-auto text-gray-700 hover:bg-gray-50"
+            className={`flex flex-col items-center py-3 h-auto hover:bg-gray-50 ${activeTab === 'referrals' ? 'text-pink-600' : 'text-gray-700'}`}
             onClick={() => setActiveTab("referrals")}
           >
             <Activity className="h-5 w-5 mb-1" />

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AddAshaModal } from '@/components/AddAshaModal';
 import { AshaProfileModal } from '@/components/AshaProfileModal';
@@ -336,12 +335,11 @@ export const AshaManagementDashboard = () => {
         )}
       </div>
 
-      {ashas.length > 0 && (
-        <FloatingAddButton
-          onClick={() => setIsAddModalOpen(true)}
-          disabled={ashas.length >= 20}
-        />
-      )}
+      {/* Floating Add Button - Always visible and functional */}
+      <FloatingAddButton
+        onClick={() => setIsAddModalOpen(true)}
+        disabled={ashas.length >= 20}
+      />
 
       <AddAshaModal 
         isOpen={isAddModalOpen}
