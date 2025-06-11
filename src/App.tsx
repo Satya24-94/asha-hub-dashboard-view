@@ -26,14 +26,12 @@ const AppContent = () => {
     );
   }
 
-  if (!user) {
-    return <LoginForm />;
-  }
-
+  // Temporarily bypass login - always show the main app
   return (
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/asha-dashboard" element={<AshaDashboard />} />
+      <Route path="/login" element={<LoginForm />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
