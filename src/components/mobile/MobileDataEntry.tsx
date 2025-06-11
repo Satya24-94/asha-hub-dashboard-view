@@ -10,7 +10,6 @@ import { Baby, Heart, UserCheck, Activity, Plus, Save, Users } from 'lucide-reac
 import { useToast } from '@/hooks/use-toast';
 
 interface BeneficiaryData {
-  // Pregnant Women
   pregnantWomen: {
     name: string;
     age: string;
@@ -21,7 +20,6 @@ interface BeneficiaryData {
     ttShots: string;
     ifaTablets: string;
   };
-  // Children
   children: {
     name: string;
     age: string;
@@ -31,7 +29,6 @@ interface BeneficiaryData {
     immunizationStatus: string;
     nutritionStatus: string;
   };
-  // Eligible Couples
   eligibleCouples: {
     husbandName: string;
     wifeName: string;
@@ -87,7 +84,6 @@ export const MobileDataEntry = () => {
   };
 
   const handleSubmit = (section: keyof BeneficiaryData) => {
-    // Validate required fields
     const sectionData = formData[section];
     const requiredFields = Object.entries(sectionData).filter(([_, value]) => !value.trim());
     
@@ -100,7 +96,6 @@ export const MobileDataEntry = () => {
       return;
     }
 
-    // Simulate data submission
     console.log(`Submitting ${section} data:`, sectionData);
     
     toast({
@@ -123,7 +118,6 @@ export const MobileDataEntry = () => {
 
   return (
     <div className="bg-gradient-to-b from-white to-gray-50 min-h-screen">
-      {/* Header */}
       <div className="bg-white p-6 border-b">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-green-100 rounded-lg">
@@ -136,7 +130,6 @@ export const MobileDataEntry = () => {
         </div>
       </div>
 
-      {/* Mobile-Optimized Tabs */}
       <div className="p-4">
         <Tabs value={activeSection} onValueChange={setActiveSection} className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6 h-12 bg-gray-100 rounded-xl p-1">
@@ -163,7 +156,6 @@ export const MobileDataEntry = () => {
             </TabsTrigger>
           </TabsList>
 
-          {/* Pregnant Women Form */}
           <TabsContent value="pregnant">
             <Card className="shadow-sm border border-pink-100">
               <CardHeader className="bg-gradient-to-r from-pink-50 to-pink-100 rounded-t-lg">
@@ -276,7 +268,7 @@ export const MobileDataEntry = () => {
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="<100"><100</SelectItem>
+                        <SelectItem value="less-than-100">Less than 100</SelectItem>
                         <SelectItem value="100+">100+</SelectItem>
                       </SelectContent>
                     </Select>
@@ -294,7 +286,6 @@ export const MobileDataEntry = () => {
             </Card>
           </TabsContent>
 
-          {/* Children Form */}
           <TabsContent value="children">
             <Card className="shadow-sm border border-blue-100">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-lg">
@@ -413,7 +404,6 @@ export const MobileDataEntry = () => {
             </Card>
           </TabsContent>
 
-          {/* Eligible Couples Form */}
           <TabsContent value="couples">
             <Card className="shadow-sm border border-purple-100">
               <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-t-lg">
@@ -522,7 +512,6 @@ export const MobileDataEntry = () => {
         </Tabs>
       </div>
 
-      {/* Bottom spacing for mobile navigation */}
       <div className="h-20"></div>
     </div>
   );
