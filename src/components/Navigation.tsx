@@ -21,18 +21,18 @@ export const Navigation = () => {
     <div className="fixed top-4 right-4 z-50">
       <Button
         onClick={handleNavigation}
-        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+        className="bg-gradient-to-r from-green-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-4 py-2 rounded-xl"
       >
         {isAshaDashboard ? (
           <>
             <ArrowLeft className="h-4 w-4 mr-2" />
             <Users className="h-4 w-4 mr-2" />
-            Facilitator Dashboard
+            <span className="font-medium">Facilitator Dashboard</span>
           </>
         ) : (
           <>
             <User className="h-4 w-4 mr-2" />
-            ASHA Dashboard
+            <span className="font-medium">ASHA Dashboard</span>
             <ArrowRight className="h-4 w-4 ml-2" />
           </>
         )}

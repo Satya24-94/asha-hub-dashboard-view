@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AddAshaModal } from '@/components/AddAshaModal';
 import { AshaProfileModal } from '@/components/AshaProfileModal';
@@ -8,6 +9,7 @@ import { AshaSearchControls } from '@/components/asha-management/AshaSearchContr
 import { AshaGridView } from '@/components/asha-management/AshaGridView';
 import { AshaEmptyState } from '@/components/asha-management/AshaEmptyState';
 import { FloatingAddButton } from '@/components/asha-management/FloatingAddButton';
+import { useToast } from '@/hooks/use-toast';
 
 interface AshaData {
   id: string;
@@ -23,6 +25,7 @@ interface AshaData {
 }
 
 export const AshaManagementDashboard = () => {
+  const { toast } = useToast();
   const [ashas, setAshas] = useState<AshaData[]>([
     {
       id: '1',
@@ -134,12 +137,25 @@ export const AshaManagementDashboard = () => {
   );
 
   const handleAddAsha = (selectedAshaId: string) => {
+    console.log('Adding ASHA with ID:', selectedAshaId);
+    
     const ashaToAdd = availableAshas.find(asha => asha.id === selectedAshaId);
     
-    if (!ashaToAdd) return;
+    if (!ashaToAdd) {
+      toast({
+        title: "Error",
+        description: "Selected ASHA not found. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     if (ashas.length >= 20) {
-      alert('Maximum 20 ASHAs allowed per facilitator');
+      toast({
+        title: "Limit Reached",
+        description: "Maximum 20 ASHAs allowed per facilitator",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -157,11 +173,24 @@ export const AshaManagementDashboard = () => {
 
     setAshas(prev => [...prev, newAsha]);
     setIsAddModalOpen(false);
+    
+    toast({
+      title: "ASHA Added Successfully",
+      description: `${ashaToAdd.name} has been added to your team.`,
+    });
   };
 
   const handleRemoveAsha = (id: string) => {
+    const ashaToRemove = ashas.find(asha => asha.id === id);
     setAshas(prev => prev.filter(asha => asha.id !== id));
     setSelectedAshas(prev => prev.filter(ashaId => ashaId !== id));
+    
+    if (ashaToRemove) {
+      toast({
+        title: "ASHA Removed",
+        description: `${ashaToRemove.name} has been removed from your team.`,
+      });
+    }
   };
 
   const handleSelectAsha = (id: string, checked: boolean) => {
@@ -186,6 +215,14 @@ export const AshaManagementDashboard = () => {
   };
 
   const handleViewCombinedPerformance = () => {
+    if (selectedAshas.length === 0) {
+      toast({
+        title: "No ASHAs Selected",
+        description: "Please select at least one ASHA to view combined performance.",
+        variant: "destructive"
+      });
+      return;
+    }
     setIsCombinedPerformanceOpen(true);
   };
 
@@ -211,9 +248,23 @@ export const AshaManagementDashboard = () => {
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Export Successful",
+      description: `${asha.name}'s report has been downloaded.`,
+    });
   };
 
   const handleExportAll = () => {
+    if (selectedAshas.length === 0) {
+      toast({
+        title: "No ASHAs Selected",
+        description: "Please select at least one ASHA to export.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     const selectedData = ashas.filter(asha => selectedAshas.includes(asha.id));
     const csvData = [
       ['Name', 'Village', 'Phone', 'Population', 'Performance', 'Status', 'Trend']
@@ -241,10 +292,15 @@ export const AshaManagementDashboard = () => {
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Export Successful",
+      description: `Report for ${selectedData.length} ASHAs has been downloaded.`,
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-green-50/20">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50/20">
       <div className="max-w-7xl mx-auto p-4 lg:p-6 space-y-6">
         <DashboardHeader
           selectedAshasCount={selectedAshas.length}
@@ -273,7 +329,11 @@ export const AshaManagementDashboard = () => {
           />
         ) : ashas.length === 0 ? (
           <AshaEmptyState onAddAsha={() => setIsAddModalOpen(true)} />
-        ) : null}
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No ASHAs found matching your search criteria.</p>
+          </div>
+        )}
       </div>
 
       {ashas.length > 0 && (
