@@ -1,9 +1,10 @@
-
 import React, { useState } from 'react';
 import { AshaManagementDashboard } from '@/components/AshaManagementDashboard';
+import { AshaFunctionalityModule } from '@/components/modules/AshaFunctionalityModule';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Users, 
   TrendingUp, 
@@ -12,12 +13,14 @@ import {
   ChevronRight,
   BarChart3,
   UserPlus,
-  Calendar
+  Calendar,
+  CheckSquare
 } from 'lucide-react';
 
 export const FacilitatorDashboard = () => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('overview');
 
   const facilitatorStats = [
     {
@@ -90,9 +93,7 @@ export const FacilitatorDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50/20">
-      {/* Add top padding to prevent navigation overlap */}
       <div className="pt-20">
-        {/* Overview Cards */}
         <div className="max-w-7xl mx-auto p-6 space-y-6">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Facilitator Dashboard</h1>
@@ -239,9 +240,54 @@ export const FacilitatorDashboard = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
 
-        <AshaManagementDashboard />
+          {/* Main Dashboard Tabs */}
+          <Card className="transition-all duration-300 hover:shadow-lg">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <div className="border-b bg-gray-50 rounded-t-lg">
+                <TabsList className="grid w-full grid-cols-3 bg-transparent h-14 p-1">
+                  <TabsTrigger 
+                    value="overview" 
+                    className="data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full text-gray-700 font-medium rounded-lg transition-all duration-200 hover:bg-white/50"
+                  >
+                    <Users className="h-4 w-4" />
+                    <span className="text-sm">ASHA Management</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="tasks" 
+                    className="data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full text-gray-700 font-medium rounded-lg transition-all duration-200 hover:bg-white/50"
+                  >
+                    <CheckSquare className="h-4 w-4" />
+                    <span className="text-sm">ASHA Tasks</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="analytics" 
+                    className="data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm flex items-center gap-2 h-full text-gray-700 font-medium rounded-lg transition-all duration-200 hover:bg-white/50"
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                    <span className="text-sm">Analytics</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              <TabsContent value="overview" className="p-0">
+                <AshaManagementDashboard />
+              </TabsContent>
+
+              <TabsContent value="tasks" className="p-6">
+                <AshaFunctionalityModule isPersonal={false} />
+              </TabsContent>
+
+              <TabsContent value="analytics" className="p-6">
+                <div className="text-center py-12">
+                  <BarChart3 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Analytics Dashboard</h3>
+                  <p className="text-gray-600">Detailed analytics and reporting features coming soon.</p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </Card>
+        </div>
       </div>
     </div>
   );
