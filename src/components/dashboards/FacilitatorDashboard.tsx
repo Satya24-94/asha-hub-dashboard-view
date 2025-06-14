@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { AshaManagementDashboard } from '@/components/AshaManagementDashboard';
 import { AshaFunctionalityModule } from '@/components/modules/AshaFunctionalityModule';
+import { ReferralTrackingModule } from '@/components/modules/ReferralTrackingModule';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { 
   Users, 
   TrendingUp, 
@@ -14,7 +16,13 @@ import {
   BarChart3,
   UserPlus,
   Calendar,
-  CheckSquare
+  CheckSquare,
+  PieChart,
+  LineChart,
+  Award,
+  AlertTriangle,
+  Heart,
+  Baby
 } from 'lucide-react';
 
 export const FacilitatorDashboard = () => {
@@ -89,6 +97,25 @@ export const FacilitatorDashboard = () => {
       case 'purple': return 'text-purple-600 bg-purple-100';
       default: return 'text-gray-600 bg-gray-100';
     }
+  };
+
+  // Analytics data for the Analytics tab
+  const analyticsData = {
+    performance: [
+      { month: 'Jan', ashas: 85, targets: 78, referrals: 92 },
+      { month: 'Feb', ashas: 87, targets: 82, referrals: 88 },
+      { month: 'Mar', ashas: 89, targets: 85, referrals: 91 },
+      { month: 'Apr', ashas: 92, targets: 88, referrals: 94 },
+      { month: 'May', ashas: 87, targets: 90, referrals: 87 },
+      { month: 'Jun', ashas: 91, targets: 92, referrals: 95 }
+    ],
+    categories: [
+      { category: 'Maternal Health', percentage: 35, color: 'bg-pink-500' },
+      { category: 'Child Health', percentage: 25, color: 'bg-blue-500' },
+      { category: 'Community Health', percentage: 20, color: 'bg-green-500' },
+      { category: 'General Health', percentage: 15, color: 'bg-purple-500' },
+      { category: 'Administrative', percentage: 5, color: 'bg-gray-500' }
+    ]
   };
 
   return (
@@ -279,10 +306,126 @@ export const FacilitatorDashboard = () => {
               </TabsContent>
 
               <TabsContent value="analytics" className="p-6">
-                <div className="text-center py-12">
-                  <BarChart3 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Analytics Dashboard</h3>
-                  <p className="text-gray-600">Detailed analytics and reporting features coming soon.</p>
+                <div className="space-y-8">
+                  {/* Analytics Header */}
+                  <div className="text-center">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Performance Analytics</h2>
+                    <p className="text-gray-600">Comprehensive insights into ASHA network performance</p>
+                  </div>
+
+                  {/* Key Metrics Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-blue-100 text-sm">Total Beneficiaries</p>
+                            <p className="text-3xl font-bold">12,847</p>
+                          </div>
+                          <Users className="h-8 w-8 text-blue-200" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-green-100 text-sm">Success Rate</p>
+                            <p className="text-3xl font-bold">94.2%</p>
+                          </div>
+                          <Award className="h-8 w-8 text-green-200" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-purple-100 text-sm">Active Programs</p>
+                            <p className="text-3xl font-bold">67</p>
+                          </div>
+                          <Activity className="h-8 w-8 text-purple-200" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-orange-100 text-sm">Urgent Cases</p>
+                            <p className="text-3xl font-bold">3</p>
+                          </div>
+                          <AlertTriangle className="h-8 w-8 text-orange-200" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Charts Section */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Performance Trends */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <LineChart className="h-5 w-5 text-blue-600" />
+                          Performance Trends
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {analyticsData.performance.map((month, index) => (
+                          <div key={month.month} className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="font-medium">{month.month}</span>
+                              <span className="text-gray-600">{month.ashas}% avg performance</span>
+                            </div>
+                            <Progress value={month.ashas} className="h-2" />
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+
+                    {/* Task Categories */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <PieChart className="h-5 w-5 text-green-600" />
+                          Task Distribution
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {analyticsData.categories.map((category, index) => (
+                          <div key={category.category} className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <div className="flex items-center gap-2">
+                                {category.category === 'Maternal Health' && <Baby className="h-4 w-4 text-pink-600" />}
+                                {category.category === 'Child Health' && <Heart className="h-4 w-4 text-red-600" />}
+                                {category.category === 'Community Health' && <Users className="h-4 w-4 text-blue-600" />}
+                                {category.category === 'General Health' && <Activity className="h-4 w-4 text-purple-600" />}
+                                {category.category === 'Administrative' && <Target className="h-4 w-4 text-gray-600" />}
+                                <span className="font-medium">{category.category}</span>
+                              </div>
+                              <span className="text-gray-600">{category.percentage}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div 
+                                className={`h-2 rounded-full ${category.color} transition-all duration-300`}
+                                style={{ width: `${category.percentage}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Additional Analytics Modules */}
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-semibold text-gray-900">Detailed Reports</h3>
+                    <ReferralTrackingModule isPersonal={false} />
+                  </div>
                 </div>
               </TabsContent>
             </Tabs>
